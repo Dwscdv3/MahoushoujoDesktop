@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MahoushoujoDesktop"
         mc:Ignorable="d"
-        Title="MainWindow" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False">
+        Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" FontSize="16">
     <Window.Background>
         <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
             <GradientStop Color="#00FF7FBF"/>
@@ -17,8 +17,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="mainStackPanel" Margin="10,0,0,0">
-            <TextBlock x:Name="textBlockTitle" TextWrapping="Wrap" Text="和我签订契约，&#13;成为马猴烧酒吧（&#13;界面效果测试" FontSize="24"/>
+        <StackPanel x:Name="mainStackPanel" Margin="0" Grid.ColumnSpan="2">
+            <TextBlock x:Name="textBlockTitle" TextWrapping="Wrap" Text="Mahoushoujo Desktop" FontSize="30" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
+            <local:ToggleButton Content="这是一个复选按钮" Height="25" HorizontalContentAlignment="Right"/>
+            <local:ToggleButton Content="已勾选是蓝色的" Height="25" HorizontalContentAlignment="Right" IsChecked="True"/>
         </StackPanel>
         <Rectangle x:Name="rectHide" Grid.Column="1" StrokeThickness="0" Panel.ZIndex="1">
             <Rectangle.Fill>
@@ -31,7 +33,7 @@
                             <ColorAnimation
                                 Storyboard.TargetName="rectHideSolidColorBrush"
                                 Storyboard.TargetProperty="Color"
-                                To="White" Duration="0:0:0.25" />
+                                To="#BFFFFFFF" Duration="0:0:0.25" />
                             <ThicknessAnimation
                                 Storyboard.TargetName="labelHide"
                                 Storyboard.TargetProperty="Margin"
