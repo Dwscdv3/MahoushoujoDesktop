@@ -6,7 +6,6 @@ using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Documents;
-using System . Windows . Forms;
 using System . Windows . Input;
 using System . Windows . Interop;
 using System . Windows . Media;
@@ -27,16 +26,22 @@ namespace MahoushoujoDesktop
             setWindowPosition ();
         }
 
-        void setWindowPosition ()
+        private void window_Loaded ( object sender , RoutedEventArgs e )
         {
-            var workingArea = Screen . PrimaryScreen . WorkingArea;
-            this . Left = workingArea . Right - MainWindowWidth;
-            this . Top = workingArea . Top;
-            this . Width = MainWindowWidth;
-            this . Height = workingArea . Height;
+
         }
 
-        // https://social.msdn.microsoft.com/Forums/zh-CN/6a9bca0a-c1e3-48b2-b1ba-716233e8a080 by Jiwen Wang
+        void setWindowPosition ()
+        {
+            var workingArea = System . Windows . Forms . Screen . PrimaryScreen . WorkingArea;
+            Left = workingArea . Right - MainWindowWidth;
+            Top = workingArea . Top;
+            Width = MainWindowWidth;
+            Height = workingArea . Height;
+        }
+
+        // https://social.msdn.microsoft.com/Forums/zh-CN/6a9bca0a-c1e3-48b2-b1ba-716233e8a080
+        // Template by "Jiwen Wang"
         IntPtr WindowProc ( IntPtr hwnd , int msg , IntPtr wParam , IntPtr lParam , ref bool handled )
         {
             switch ( msg )

@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MahoushoujoDesktop", "Mahou
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E1DBE735-0EA1-4E6D-B8B7-17BDDC46DD3B}"
 	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
 		坑.txt = 坑.txt
 	EndProjectSection
 EndProject

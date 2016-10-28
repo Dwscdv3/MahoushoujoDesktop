@@ -1,4 +1,5 @@
 ﻿using System;
+using System . Collections . Generic;
 using System . Windows;
 using System . Windows . Forms;
 
@@ -6,6 +7,14 @@ namespace MahoushoujoDesktop
 {
     public static class Const
     {
+        public static string UrlApi
+        {
+            get
+            {
+                return "http://api.syouzyo.org/?";
+            }
+        }
+
         public const double _mainWindowWidth = 250.0;
         public static double MainWindowWidth
         {

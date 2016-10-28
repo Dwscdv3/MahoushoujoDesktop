@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MahoushoujoDesktop"
         mc:Ignorable="d"
-        Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" FontSize="16">
+        Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded">
     <Window.Background>
         <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-            <GradientStop Color="#00FF7FBF"/>
-            <GradientStop Color="#FFFF7FBF" Offset="1"/>
+            <GradientStop Color="#00000000"/>
+            <GradientStop Color="#BF000000" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
     <Grid>
@@ -17,11 +17,42 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="mainStackPanel" Margin="0" Grid.ColumnSpan="2">
-            <TextBlock x:Name="textBlockTitle" TextWrapping="Wrap" Text="Mahoushoujo Desktop" FontSize="30" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
-            <local:ToggleButton Content="这是一个复选按钮" Height="25" HorizontalContentAlignment="Right"/>
-            <local:ToggleButton Content="已勾选是蓝色的" Height="25" HorizontalContentAlignment="Right" IsChecked="True"/>
-        </StackPanel>
+        <Grid x:Name="gridContent" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel x:Name="stackPanelSetting" Grid.RowSpan="2">
+                <TextBlock x:Name="textBlockTitle" TextWrapping="Wrap" Text="Mahoushoujo Desktop ☆" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
+                <TextBlock Text="Group 1" FontWeight="Bold"/>
+                <local:ToggleButton Content="这是一个复选按钮" Height="25" HorizontalContentAlignment="Right"/>
+                <local:ToggleButton Content="已勾选" Height="25" HorizontalContentAlignment="Right" IsChecked="True"/>
+                <TextBlock Text="Group 2" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>
+                <StackPanel x:Name="stackPanelInfo" Margin="0,0,0,10">
+                    <TextElement.FontSize>12</TextElement.FontSize>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Text="开发状态" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock Text="In-dev: User Interface&#13;@Dwscdv3"/>
+                    </DockPanel>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Text="详细信息" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock TextWrapping="Wrap" Text="The quick brown fox jumps over the lazy dog."/>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                    <Button Style="{DynamicResource FlatButtonStyle}"
+                            Content="&#xE892;" FontFamily="Segoe MDL2 Assets"/>
+                    <ToggleButton Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
+                                  Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
+                                  Width="64" Height="64"/>
+                    <Button Style="{DynamicResource FlatButtonStyle}"
+                            Content="&#xE893;" FontFamily="Segoe MDL2 Assets"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
         <Rectangle x:Name="rectHide" Grid.Column="1" StrokeThickness="0" Panel.ZIndex="1">
             <Rectangle.Fill>
                 <SolidColorBrush x:Name="rectHideSolidColorBrush" Color="#01FFFFFF" />
@@ -39,7 +70,7 @@
                                 Storyboard.TargetProperty="Margin"
                                 To="0" Duration="0:0:0.25" />
                             <DoubleAnimation
-                                Storyboard.TargetName="mainStackPanel"
+                                Storyboard.TargetName="gridContent"
                                 Storyboard.TargetProperty="Opacity"
                                 To="0.2" Duration="0:0:0.25" />
                         </Storyboard>
@@ -57,7 +88,7 @@
                                 Storyboard.TargetProperty="Margin"
                                 To="{x:Static local:Const.LabelHideMargin}" Duration="0:0:0.25" />
                             <DoubleAnimation
-                                Storyboard.TargetName="mainStackPanel"
+                                Storyboard.TargetName="gridContent"
                                 Storyboard.TargetProperty="Opacity"
                                 To="1" Duration="0:0:0.25" />
                         </Storyboard>
@@ -77,6 +108,11 @@
             </Rectangle.Triggers>
         </Rectangle>
         <Label x:Name="labelHide" Content="→" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="72" Width="{x:Static local:Const.MainWindowWidth}" HorizontalAlignment="Right" Margin="{x:Static local:Const.LabelHideMargin}" Grid.ColumnSpan="2"/>
+        <ProgressBar Grid.Column="1" Orientation="Vertical" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="#FFFF7FBF"/>
+
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
+        </Grid.Effect>
     </Grid>
 
     <Window.Resources>
@@ -94,8 +130,53 @@
                 </Setter.Value>
             </Setter>
         </Style>-->
+        <Style x:Key="FlatButtonStyle" TargetType="{x:Type ButtonBase}">
+            <Setter Property="FontSize" Value="32px"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#3FFFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="FlatToggleButtonTemplate" TargetType="{x:Type ToggleButton}">
+            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" TargetName="Bd" Value="#3FFFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Foreground" Value="#FFFF7FBF"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
-    <Window.Effect>
-        <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
-    </Window.Effect>
 </Window>
