@@ -17,9 +17,9 @@
             <GradientStop Offset="1" Color="#FF7F7F7F" />
         </LinearGradientBrush>
     </ToggleButton.Resources>
-    <ToggleButton.Effect>
+    <!--<ToggleButton.Effect>
         <DropShadowEffect ShadowDepth="1" BlurRadius="3"/>
-    </ToggleButton.Effect>
+    </ToggleButton.Effect>-->
     <ToggleButton.Style>
         <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>

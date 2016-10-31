@@ -9,5 +9,8 @@ namespace MahoushoujoDesktop . Native
     static class WindowMessage
     {
         public const int DisplayChange = 0x7e;
+        public const int User = 0x400;
+
+        public const int Custom_ShowWindow = User + 1;
     }
 }

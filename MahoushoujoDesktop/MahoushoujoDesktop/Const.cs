@@ -38,5 +38,15 @@ namespace MahoushoujoDesktop
                 return Screen . PrimaryScreen . Bounds . Right;
             }
         }
+        public static double ScreenRightBoundMinusMainWindowWidth
+        {
+            get
+            {
+                return ScreenRightBound - MainWindowWidth;
+            }
+        }
+
+        public static string FileNameCurrentImage = "Current Image";
+        public static string FileNameWindowHandle = "Window Handle";
     }
 }

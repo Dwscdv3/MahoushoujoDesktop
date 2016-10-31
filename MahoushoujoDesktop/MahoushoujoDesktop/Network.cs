@@ -36,7 +36,15 @@ namespace MahoushoujoDesktop
 
         public async Task<byte []> GetBytes ( string url )
         {
+            return await GetBytes ( url , null );
+        }
+        public async Task<byte []> GetBytes ( string url , DownloadProgressChangedEventHandler progressEvent )
+        {
             WebClient c = getWebClient ();
+            if ( progressEvent != null )
+            {
+                c . DownloadProgressChanged += progressEvent;
+            }
             return await c . DownloadDataTaskAsync ( new Uri ( url ) );
         }
         public async Task<string> GetString ( string url )

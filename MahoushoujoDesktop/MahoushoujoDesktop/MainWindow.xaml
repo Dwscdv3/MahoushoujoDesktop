@@ -1,135 +1,14 @@
-﻿<Window x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MahoushoujoDesktop"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls" x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"
-        Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded">
-    <Window.Background>
-        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-            <GradientStop Color="#00000000"/>
-            <GradientStop Color="#BF000000" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <Grid x:Name="gridContent" Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <StackPanel x:Name="stackPanelSetting" Grid.RowSpan="2">
-                <TextBlock x:Name="textBlockTitle" TextWrapping="Wrap" Text="Mahoushoujo Desktop ☆" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
-                <TextBlock Text="Group 1" FontWeight="Bold"/>
-                <local:ToggleButton Content="这是一个复选按钮" Height="25" HorizontalContentAlignment="Right"/>
-                <local:ToggleButton Content="已勾选" Height="25" HorizontalContentAlignment="Right" IsChecked="True"/>
-                <TextBlock Text="Group 2" FontWeight="Bold"/>
-            </StackPanel>
-            <StackPanel Grid.Row="1">
-                <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>
-                <StackPanel x:Name="stackPanelInfo" Margin="0,0,0,10">
-                    <TextElement.FontSize>12</TextElement.FontSize>
-                    <DockPanel Margin="10,0,10,10">
-                        <TextBlock Text="开发状态" Width="60" VerticalAlignment="Top"/>
-                        <TextBlock Text="In-dev: User Interface&#13;@Dwscdv3"/>
-                    </DockPanel>
-                    <DockPanel Margin="10,0,10,10">
-                        <TextBlock Text="详细信息" Width="60" VerticalAlignment="Top"/>
-                        <TextBlock TextWrapping="Wrap" Text="The quick brown fox jumps over the lazy dog."/>
-                    </DockPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <Button Style="{DynamicResource FlatButtonStyle}"
-                            Content="&#xE892;" FontFamily="Segoe MDL2 Assets"/>
-                    <ToggleButton Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
-                                  Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
-                                  Width="64" Height="64"/>
-                    <Button Style="{DynamicResource FlatButtonStyle}"
-                            Content="&#xE893;" FontFamily="Segoe MDL2 Assets"/>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
-        <Rectangle x:Name="rectHide" Grid.Column="1" StrokeThickness="0" Panel.ZIndex="1">
-            <Rectangle.Fill>
-                <SolidColorBrush x:Name="rectHideSolidColorBrush" Color="#01FFFFFF" />
-            </Rectangle.Fill>
-            <Rectangle.Triggers>
-                <EventTrigger RoutedEvent="UIElement.MouseEnter">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation
-                                Storyboard.TargetName="rectHideSolidColorBrush"
-                                Storyboard.TargetProperty="Color"
-                                To="#BFFFFFFF" Duration="0:0:0.25" />
-                            <ThicknessAnimation
-                                Storyboard.TargetName="labelHide"
-                                Storyboard.TargetProperty="Margin"
-                                To="0" Duration="0:0:0.25" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="gridContent"
-                                Storyboard.TargetProperty="Opacity"
-                                To="0.2" Duration="0:0:0.25" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="UIElement.MouseLeave">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation
-                                Storyboard.TargetName="rectHideSolidColorBrush"
-                                Storyboard.TargetProperty="Color"
-                                To="#01FFFFFF" Duration="0:0:0.25" />
-                            <ThicknessAnimation
-                                Storyboard.TargetName="labelHide"
-                                Storyboard.TargetProperty="Margin"
-                                To="{x:Static local:Const.LabelHideMargin}" Duration="0:0:0.25" />
-                            <DoubleAnimation
-                                Storyboard.TargetName="gridContent"
-                                Storyboard.TargetProperty="Opacity"
-                                To="1" Duration="0:0:0.25" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="window"
-                                Storyboard.TargetProperty="Left"
-                                To="{x:Static local:Const.ScreenRightBound}" Duration="0:0:0.25"
-                                Completed="HideOut_Completed" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Rectangle.Triggers>
-        </Rectangle>
-        <Label x:Name="labelHide" Content="→" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="72" Width="{x:Static local:Const.MainWindowWidth}" HorizontalAlignment="Right" Margin="{x:Static local:Const.LabelHideMargin}" Grid.ColumnSpan="2"/>
-        <ProgressBar Grid.Column="1" Orientation="Vertical" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="#FFFF7FBF"/>
-
-        <Grid.Effect>
-            <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
-        </Grid.Effect>
-    </Grid>
+        Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded" Background="{DynamicResource BlackLinearGradientBrush}">
 
     <Window.Resources>
-        <!--<Style x:Key="WhiteForegroundWithShadow" TargetType="{x:Type ContentControl}">
-            <Setter Property="Foreground" Value="#FFFFFFFF" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ContentControl">
-                        <ContentPresenter>
-                            <ContentPresenter.Effect>
-                                <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
-                            </ContentPresenter.Effect>
-                        </ContentPresenter>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
         <Style x:Key="FlatButtonStyle" TargetType="{x:Type ButtonBase}">
             <Setter Property="FontSize" Value="32px"/>
             <Setter Property="Width" Value="50"/>
@@ -152,7 +31,7 @@
                                 <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                <Setter Property="Opacity" Value="0.25"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -178,5 +57,172 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <LinearGradientBrush x:Key="BlackLinearGradientBrush" EndPoint="1,0.5" StartPoint="0,0.5">
+            <GradientStop Color="#00000000"/>
+            <GradientStop Color="#BF000000" Offset="1"/>
+        </LinearGradientBrush>
+        <Storyboard x:Key="SlideInStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="window"
+                Storyboard.TargetProperty="Left"
+                To="{x:Static local:Const.ScreenRightBoundMinusMainWindowWidth}" Duration="0:0:0.15"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideOutStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="window"
+                Storyboard.TargetProperty="Left"
+                To="{x:Static local:Const.ScreenRightBound}" Duration="0:0:0.15"
+                Completed="SlideOut_Completed" />
+        </Storyboard>
+        <Storyboard x:Key="ProgressCircleExitStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="progressCircleExit"
+                Storyboard.TargetProperty="Value"
+                From="0" To="100" Duration="0:0:0.8"
+                Completed="ProgressCircleExit_Completed"/>
+        </Storyboard>
     </Window.Resources>
+    <Grid>
+        <Grid.OpacityMask>
+            <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                <GradientStop Color="#BF000000" Offset="0"/>
+                <GradientStop Color="Black" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.OpacityMask>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
+        </Grid.Effect>
+        <Grid x:Name="gridContent" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel x:Name="stackPanelSetting" Grid.RowSpan="2">
+                <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
+                <TextBlock Text="这里是留白" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,5,10,0"/>
+                <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,5,10,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>
+                <StackPanel x:Name="stackPanelInfo" Margin="0,0,0,10">
+                    <TextElement.FontSize>
+                        <System:Double>12</System:Double>
+                    </TextElement.FontSize>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Width="60" VerticalAlignment="Top" Text="ID"/>
+                        <TextBlock x:Name="textId" TextWrapping="Wrap"/>
+                    </DockPanel>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Width="60" VerticalAlignment="Top" Text="标题"/>
+                        <TextBlock x:Name="textTitle" TextWrapping="Wrap"/>
+                    </DockPanel>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Text="作者" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock x:Name="textAuthor" TextWrapping="Wrap"/>
+                    </DockPanel>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Width="60" VerticalAlignment="Top" Text="来源"/>
+                        <TextBlock x:Name="textSource" TextWrapping="Wrap"/>
+                    </DockPanel>
+                    <DockPanel Margin="10,0,10,10">
+                        <TextBlock Text="开发状态" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock Text="Pre-alpha: Basic Features&#xA;@Dwscdv3" TextWrapping="Wrap"/>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                    <Button x:Name="buttonPrev"
+                            Style="{DynamicResource FlatButtonStyle}"
+                            Content="&#xE892;" FontFamily="Segoe MDL2 Assets"
+                            Click="buttonPrev_Click"/>
+                    <ToggleButton x:Name="buttonMainSwitch"
+                                  Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
+                                  Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
+                                  Width="64" Height="64" Click="buttonMainSwitch_Click"/>
+                    <Button x:Name="buttonNext"
+                            Style="{DynamicResource FlatButtonStyle}"
+                            Content="&#xE893;" FontFamily="Segoe MDL2 Assets"
+                            Click="buttonNext_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Rectangle x:Name="rectHide" Grid.Column="1" StrokeThickness="0" Panel.ZIndex="1"
+                   MouseRightButtonDown="rectHide_MouseRightButtonDown"
+                   MouseRightButtonUp="rectHide_MouseRightButtonUp"
+                   MouseLeave="rectHide_MouseLeave">
+            <Rectangle.Fill>
+                <SolidColorBrush x:Name="rectHideSolidColorBrush" Color="#01FFFFFF" />
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation
+                                Storyboard.TargetName="rectHideSolidColorBrush"
+                                Storyboard.TargetProperty="Color"
+                                To="#BFFFFFFF" Duration="0:0:0.2" />
+                            <ThicknessAnimation
+                                Storyboard.TargetName="gridHide"
+                                Storyboard.TargetProperty="Margin"
+                                To="0" Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="gridContent"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0.2" Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation
+                                Storyboard.TargetName="rectHideSolidColorBrush"
+                                Storyboard.TargetProperty="Color"
+                                To="#01FFFFFF" Duration="0:0:0.2" />
+                            <ThicknessAnimation
+                                Storyboard.TargetName="gridHide"
+                                Storyboard.TargetProperty="Margin"
+                                To="{x:Static local:Const.LabelHideMargin}" Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="gridContent"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1" Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
+                    <BeginStoryboard Storyboard="{DynamicResource SlideOutStoryboard}"/>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+        <Grid x:Name="gridHide" Width="{x:Static local:Const.MainWindowWidth}"
+              HorizontalAlignment="Right" Margin="{x:Static local:Const.LabelHideMargin}" Grid.ColumnSpan="2">
+            <UserControls:CircularProgress x:Name="progressCircleExit"
+                                           Width="100" Height="100"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Foreground="#FFFF3F3F"
+                                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label x:Name="labelHide"
+                   Content="→" FontSize="72" Foreground="White"
+                   VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Label x:Name="labelHideDescription"
+                   Content="点击隐藏" FontWeight="Light" FontSize="24" Foreground="#BFFFFFFF"
+                   Margin="0,130,0,0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Content="（按住鼠标右键以完全退出）" FontSize="12" Foreground="#BFFFFFFF"
+                   Margin="0,175,0,0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Content="按 Ctrl+Alt+W 重新显示此窗口" FontSize="14" Foreground="#BFFFFFFF"
+                   Margin="0,220,0,0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+        <ProgressBar x:Name="progressBar" Grid.Column="1" Orientation="Vertical" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="#FFFF7FBF" SmallChange="0.01" LargeChange="0.1" Maximum="1"/>
+
+    </Grid>
+
 </Window>
