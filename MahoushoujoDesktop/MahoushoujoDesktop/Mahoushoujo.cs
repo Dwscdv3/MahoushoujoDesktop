@@ -54,6 +54,12 @@ namespace MahoushoujoDesktop
             }
             set
             {
+                if ( value )
+                {
+                    timerStartTime = DateTime . Now;
+                }
+                timerProgressBarNext . IsEnabled = value;
+                mainWindow . progressBarNext . Value = 0;
                 timer . IsEnabled = value;
                 Default . MainSwitch = value;
                 Default . Save ();
@@ -99,6 +105,8 @@ namespace MahoushoujoDesktop
 
         static Network net;
         static DispatcherTimer timer = new DispatcherTimer ();
+        static DateTime timerStartTime;
+        static DispatcherTimer timerProgressBarNext = new DispatcherTimer ();
         static MainWindow mainWindow;
         static int time = 0;
         static List<JsonImageInfo> history = new List<JsonImageInfo> ();
@@ -126,11 +134,16 @@ namespace MahoushoujoDesktop
 
             timer . Interval = Default . TimerInterval;
             timer . Tick += timer_Tick;
+            timerProgressBarNext . Interval = TimeSpan . FromMilliseconds ( 16.6 );
+            timerProgressBarNext . Tick += TimerProgressBarNext_Tick;
             if ( Default . MainSwitch )
             {
+                timerStartTime = DateTime . Now;
                 timer . Start ();
+                timerProgressBarNext . Start ();
             }
         }
+
         public static void Reset ()
         {
             ResetTimerProgress ();
@@ -142,6 +155,8 @@ namespace MahoushoujoDesktop
 
         static void timer_Tick ( object sender , EventArgs e )
         {
+            timerStartTime = DateTime . Now;
+
             if ( IsRandom )
             {
                 Random ();
@@ -151,6 +166,11 @@ namespace MahoushoujoDesktop
                 Next ();
             }
         }
+        private static void TimerProgressBarNext_Tick ( object sender , EventArgs e )
+        {
+            mainWindow . progressBarNext . Value = ( DateTime . Now - timerStartTime ) . TotalMilliseconds / timer . Interval . TotalMilliseconds;
+        }
+
         public static void ResetTimeFilter ()
         {
             time = 0;
@@ -160,6 +180,7 @@ namespace MahoushoujoDesktop
             if ( IsTimerEnabled )
             {
                 timer . Stop ();
+                timerStartTime = DateTime . Now;
                 timer . Start ();
             }
         }
