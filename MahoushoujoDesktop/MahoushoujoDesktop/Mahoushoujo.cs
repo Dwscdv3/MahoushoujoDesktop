@@ -67,6 +67,35 @@ namespace MahoushoujoDesktop
                 return pointInHistory > 0;
             }
         }
+        static Source _source = Source . Index;
+        public static Source Source
+        {
+            get
+            {
+                return _source;
+            }
+            set
+            {
+                _source = value;
+                Reset ();
+            }
+        }
+        static bool _isRandom = false;
+        public static bool IsRandom
+        {
+            get
+            {
+                return _isRandom;
+            }
+            set
+            {
+                if ( value != _isRandom )
+                {
+                    _isRandom = value;
+                    Reset ();
+                }
+            }
+        }
 
         static Network net;
         static DispatcherTimer timer = new DispatcherTimer ();
@@ -102,10 +131,29 @@ namespace MahoushoujoDesktop
                 timer . Start ();
             }
         }
+        public static void Reset ()
+        {
+            ResetTimerProgress ();
+            ResetTimeFilter ();
+            history = new List<JsonImageInfo> ();
+            pointInHistory = -1;
+            timer_Tick ( null , null );
+        }
 
         static void timer_Tick ( object sender , EventArgs e )
         {
-            Next ();
+            if ( IsRandom )
+            {
+                Random ();
+            }
+            else
+            {
+                Next ();
+            }
+        }
+        public static void ResetTimeFilter ()
+        {
+            time = 0;
         }
         public static void ResetTimerProgress ()
         {
@@ -115,6 +163,7 @@ namespace MahoushoujoDesktop
                 timer . Start ();
             }
         }
+
         public static void SetInfo ( JsonImageInfo info )
         {
             #region 详细信息::ID
@@ -163,6 +212,17 @@ namespace MahoushoujoDesktop
             Default . LastImage = info;
             Default . Save ();
         }
+        private static async void SetWallpaper ( JsonImageInfo info )
+        {
+            bool success = false;
+            do
+            {
+                success = await DownloadWeiboImage ( info . 微博图片 );
+            } while ( success == false );
+
+            await Task . Delay ( 50 );
+            SetWallpaperLegacy ( Environment . CurrentDirectory + "\\" + FileNameCurrentImage );
+        }
 
         private static void IdLink_OnClick ( object sender , RoutedEventArgs e )
         {
@@ -179,25 +239,17 @@ namespace MahoushoujoDesktop
             Process . Start ( text );
         }
 
-        private static async void SetWallpaper ( JsonImageInfo info )
-        {
-            var path = await DownloadWeiboImage ( info . 微博图片 );
-
-            await Task . Delay ( 50 );
-            SetWallpaperLegacy ( path );
-        }
-        
-        public static void ResetTimeFilter ()
-        {
-            time = 0;
-        }
-
         public static async void Next ()
         {
             JsonImageInfo info = null;
             if ( pointInHistory >= history . Count - 1 )
             {
-                // TODO: if Mode=Random then Random()
+                if ( IsRandom )
+                {
+                    Random ();
+                    return;
+                }
+
                 string json;
                 if ( time <= 0 || time >= 2000000000 )
                 {
@@ -207,6 +259,7 @@ namespace MahoushoujoDesktop
                 {
                     json = await net . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
                 }
+
                 if ( !string . IsNullOrWhiteSpace ( json ) )
                 {
                     JavaScriptSerializer parser = new JavaScriptSerializer ();
@@ -238,24 +291,46 @@ namespace MahoushoujoDesktop
                 SetInfo ( info );
             }
         }
-
-        public static async Task<JsonImageInfo> Random ()
+        public static async void Random ()
         {
             string json = await net . GetString ( UrlApi + "rand&预设=宽屏" );
             JavaScriptSerializer parser = new JavaScriptSerializer ();
             var obj = parser . DeserializeObject ( json );
             var info = parser . ConvertToType<JsonImageInfo> ( obj );
+            time = info . created;
             history . Add ( info );
-            return info;
+            pointInHistory = history . Count - 1;
+            if ( info != null )
+            {
+                SetInfo ( info );
+            }
+            else
+            {
+                Debug . WriteLine ( "Mahoushoujo.Random() info is null" );
+            }
         }
 
-        public static async Task<string> DownloadWeiboImage ( string hash )
+        private static async Task<bool> DownloadWeiboImage ( string hash )
         {
-            IsDownloading = true;
+            byte [] data = null;
 
-            var data = await net . GetBytes ( getWeiboImageUrl ( hash ) , updateProgressBar );
+            IsDownloading = true;
+            try
+            {
+                data = await net . GetBytes ( getWeiboImageUrl ( hash ) , updateProgressBar );
+            }
+            catch ( WebException ex )
+            {
+                Debug . WriteLine ( ex + "\r\n\t" + ex . Message );
+                return false;
+            }
+            finally
+            {
+                IsDownloading = false;
+            }
+
             var path = FileNameCurrentImage;
-            FileInfo file = new FileInfo ( path );
+            var file = new FileInfo ( path );
             FileStream stream = null;
             if ( file . Exists )
             {
@@ -270,11 +345,8 @@ namespace MahoushoujoDesktop
             stream . Close ();
             file . Attributes = file . Attributes | FileAttributes . Hidden;
 
-            IsDownloading = false;
-
-            return Environment . CurrentDirectory + "\\" + path;
+            return true;
         }
-
         static string getWeiboImageUrl ( string hash )
         {
             return $"http://ww1.sinaimg.cn/large/{hash}";
@@ -291,5 +363,14 @@ namespace MahoushoujoDesktop
                 mainWindow . progressBar . Value = (double) e . BytesReceived / e . TotalBytesToReceive;
             }
         }
+    }
+    public enum Source
+    {
+        Index,
+        Tag,
+        Album,
+        UserLike,
+        Random = int . MaxValue, // TODO: Under consideration
+        Icarus = -1
     }
 }

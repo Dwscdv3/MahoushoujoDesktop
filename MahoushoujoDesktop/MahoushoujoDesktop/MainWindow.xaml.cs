@@ -76,7 +76,10 @@ namespace MahoushoujoDesktop
             switch ( msg )
             {
             case WM . DisplayChange:
-                setWindowPosition ();
+                Task . Delay ( 1000 ) . ContinueWith ( t =>
+                {
+                    setWindowPosition ();
+                } );
                 break;
             case WM . Custom_ShowWindow:
                 if ( !IsVisible )
@@ -92,6 +95,7 @@ namespace MahoushoujoDesktop
         {
             base . Show ();
             slideInStoryboard . Begin ();
+            setWindowPosition ();
         }
         public new void Hide ()
         {

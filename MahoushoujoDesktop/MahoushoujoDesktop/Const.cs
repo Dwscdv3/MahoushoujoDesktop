@@ -35,7 +35,7 @@ namespace MahoushoujoDesktop
         {
             get
             {
-                return Screen . PrimaryScreen . Bounds . Right;
+                return Screen . PrimaryScreen . WorkingArea . Right;
             }
         }
         public static double ScreenRightBoundMinusMainWindowWidth

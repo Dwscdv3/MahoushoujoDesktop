@@ -81,6 +81,100 @@
                 From="0" To="100" Duration="0:0:0.8"
                 Completed="ProgressCircleExit_Completed"/>
         </Storyboard>
+
+        <Style x:Key="RepeatButtonLeft" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Grid>
+                            <Rectangle Fill="{TemplateBinding Background}" Height="4" Width="{TemplateBinding Width}"/>
+                            <Rectangle Fill="Transparent"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RepeatButtonRight" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Grid>
+                            <Rectangle Fill="{TemplateBinding Background}" Height="4" Width="{TemplateBinding Width}"/>
+                            <Rectangle Fill="Transparent"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
+            <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+                <Ellipse x:Name="grip" Width="20" Height="20" StrokeThickness="2" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Foreground}"/>
+                <Ellipse Width="10" Height="10" Fill="{TemplateBinding BorderBrush}"/>
+                <Ellipse x:Name="highlight" Width="20" Height="20" StrokeThickness="0"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Fill" TargetName="highlight" Value="#3FFFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsDragging" Value="true">
+                    <Setter Property="Fill" TargetName="highlight" Value="#7FFFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Fill" TargetName="grip" Value="Gray"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="SliderHorizontal" TargetType="{x:Type Slider}">
+            <Border x:Name="border" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2" Placement="Top" Grid.Row="0" Visibility="Collapsed"/>
+                    <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0" Placement="Bottom" Grid.Row="2" Visibility="Collapsed"/>
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.DecreaseRepeatButton>
+                            <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource RepeatButtonLeft}" Background="{TemplateBinding Foreground}"/>
+                        </Track.DecreaseRepeatButton>
+                        <Track.IncreaseRepeatButton>
+                            <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource RepeatButtonRight}" Background="{TemplateBinding Background}"/>
+                        </Track.IncreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbHorizontalDefault}" BorderBrush="{TemplateBinding BorderBrush}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                        </Track.Thumb>
+                    </Track>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TickPlacement" Value="TopLeft">
+                    <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                </Trigger>
+                <Trigger Property="TickPlacement" Value="BottomRight">
+                    <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+                </Trigger>
+                <Trigger Property="TickPlacement" Value="Both">
+                    <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+                </Trigger>
+                <Trigger Property="IsSelectionRangeEnabled" Value="true"/>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="SliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+            <Setter Property="Background" Value="#3F000000"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="Foreground" Value="#FFFF7FBF"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template" Value="{StaticResource SliderHorizontal}"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.OpacityMask>
@@ -106,6 +200,7 @@
                 <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
                 <TextBlock Text="这里是留白" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,5,10,0"/>
                 <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,5,10,0"/>
+                <Slider x:Name="slider" Style="{DynamicResource SliderStyle}" Value="1" BorderBrush="#FFDFDFDF" Foreground="#FFFF7FBF" Background="{x:Null}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Maximum="6" SmallChange="1" Margin="10,10,10,0"/>
             </StackPanel>
             <StackPanel Grid.Row="1">
                 <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>
@@ -122,7 +217,7 @@
                         <TextBlock x:Name="textTitle" TextWrapping="Wrap"/>
                     </DockPanel>
                     <DockPanel Margin="10,0,10,10">
-                        <TextBlock Text="作者" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock Width="60" VerticalAlignment="Top" Text="作者"/>
                         <TextBlock x:Name="textAuthor" TextWrapping="Wrap"/>
                     </DockPanel>
                     <DockPanel Margin="10,0,10,10">
@@ -138,7 +233,7 @@
                     <Button x:Name="buttonPrev"
                             Style="{DynamicResource FlatButtonStyle}"
                             Content="&#xE892;" FontFamily="Segoe MDL2 Assets"
-                            Click="buttonPrev_Click"/>
+                            Click="buttonPrev_Click" IsEnabled="False"/>
                     <ToggleButton x:Name="buttonMainSwitch"
                                   Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
                                   Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
