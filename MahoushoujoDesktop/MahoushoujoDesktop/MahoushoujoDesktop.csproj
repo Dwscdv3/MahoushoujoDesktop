@@ -72,7 +72,7 @@
     <Compile Include="CircularProgress.xaml.cs">
       <DependentUpon>CircularProgress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JsonImageInfo.cs" />
+    <Compile Include="JsonInfo.cs" />
     <Compile Include="Mahoushoujo.cs" />
     <Compile Include="Native\Managed.cs" />
     <Compile Include="Native\User32.cs" />
@@ -81,6 +81,7 @@
     <Compile Include="ToggleButton.xaml.cs">
       <DependentUpon>ToggleButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="User.cs" />
     <Page Include="CircularProgress.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

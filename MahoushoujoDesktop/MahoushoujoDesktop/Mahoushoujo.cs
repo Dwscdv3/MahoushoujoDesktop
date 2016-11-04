@@ -22,7 +22,7 @@ namespace MahoushoujoDesktop
     {
         public static readonly Dictionary<string , string> MahoushoujoCustomHeaders = new Dictionary<string , string> ()
         {
-            { "Referer", "http://syouzyo.org/?from=WindowsClient" }
+            { "Referer", "http://syouzyo.org/?from=Dwscdv3.WindowsClient" }
         };
 
         static bool _isDownloading = false;
@@ -110,6 +110,7 @@ namespace MahoushoujoDesktop
             set
             {
                 timer . Interval = value;
+                ResetTimerProgress ();
                 //Default . TimerInterval = value;
             }
         }

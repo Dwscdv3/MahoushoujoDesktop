@@ -234,21 +234,21 @@
                     </DockPanel>
                     <DockPanel Margin="10,0,10,10">
                         <TextBlock Text="开发状态" Width="60" VerticalAlignment="Top"/>
-                        <TextBlock Text="Pre-alpha: Basic Features&#xA;@Dwscdv3" TextWrapping="Wrap"/>
+                        <TextBlock Text="Alpha: User system&#xA;@Dwscdv3" TextWrapping="Wrap"/>
                     </DockPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                     <Button x:Name="buttonPrev"
                             Style="{DynamicResource FlatButtonStyle}"
-                            Content="&#xE892;" FontFamily="Segoe MDL2 Assets"
+                            Content="&#xE76B;" FontFamily="Segoe MDL2 Assets"
                             Click="buttonPrev_Click" IsEnabled="False"/>
                     <ToggleButton x:Name="buttonMainSwitch"
                                   Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
                                   Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
-                                  Width="64" Height="64" Click="buttonMainSwitch_Click"/>
+                                  Width="64" Height="64" Click="buttonMainSwitch_Click" Margin="10,0"/>
                     <Button x:Name="buttonNext"
                             Style="{DynamicResource FlatButtonStyle}"
-                            Content="&#xE893;" FontFamily="Segoe MDL2 Assets"
+                            Content="&#xE76C;" FontFamily="Segoe MDL2 Assets"
                             Click="buttonNext_Click"/>
                 </StackPanel>
             </StackPanel>

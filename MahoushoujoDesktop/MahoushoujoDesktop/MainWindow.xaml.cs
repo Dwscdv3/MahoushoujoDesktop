@@ -69,10 +69,12 @@ namespace MahoushoujoDesktop
             #endregion
 
             progressCircleExit . StrokeThickness = 5.0;
-            
+
             Mahoushoujo . Init ();
             buttonMainSwitch . IsChecked = Default . MainSwitch;
             sliderInterval . Value = Default . NextIntervalSliderValue;
+            textInterval . Text = NextIntervals [ (int) sliderInterval . Value ] . Description;
+            SetTimerIntervalBySliderValue ();
         }
 
         private void window_Activated ( object sender , EventArgs e )
@@ -191,6 +193,11 @@ namespace MahoushoujoDesktop
         }
 
         private void sliderInterval_LostMouseCapture ( object sender , MouseEventArgs e )
+        {
+            SetTimerIntervalBySliderValue ();
+        }
+
+        private void SetTimerIntervalBySliderValue ()
         {
             TimerInterval = NextIntervals [ (int) sliderInterval . Value ] . TimeSpan;
             Default . NextIntervalSliderValue = sliderInterval . Value;
