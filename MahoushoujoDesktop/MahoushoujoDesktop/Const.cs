@@ -48,5 +48,28 @@ namespace MahoushoujoDesktop
 
         public static string FileNameCurrentImage = "Current Image";
         public static string FileNameWindowHandle = "Window Handle";
+
+        public static double NextIntervalsCount
+        {
+            get
+            {
+                return NextIntervals . Length - 1;
+            }
+        }
+        public static readonly TimeSpanNode [] NextIntervals = new TimeSpanNode []
+        {
+            new TimeSpanNode { Description = "1 分钟" , TimeSpan = new TimeSpan ( 0 , 1 , 0 ) },
+            new TimeSpanNode { Description = "5 分钟" , TimeSpan = new TimeSpan ( 0 , 5 , 0 ) },
+            new TimeSpanNode { Description = "15 分钟" , TimeSpan = new TimeSpan ( 0 , 15 , 0 ) },
+            new TimeSpanNode { Description = "1 小时" , TimeSpan = new TimeSpan ( 1 , 0 , 0 ) },
+            new TimeSpanNode { Description = "4 小时" , TimeSpan = new TimeSpan ( 4 , 0 , 0 ) },
+            new TimeSpanNode { Description = "12 小时" , TimeSpan = new TimeSpan ( 12 , 0 , 0 ) },
+        };
+    }
+
+    public struct TimeSpanNode
+    {
+        public string Description;
+        public TimeSpan TimeSpan;
     }
 }

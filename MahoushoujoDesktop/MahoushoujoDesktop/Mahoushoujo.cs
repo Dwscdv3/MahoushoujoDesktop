@@ -62,7 +62,6 @@ namespace MahoushoujoDesktop
                 mainWindow . progressBarNext . Value = 0;
                 timer . IsEnabled = value;
                 Default . MainSwitch = value;
-                Default . Save ();
                 mainWindow . buttonMainSwitch . IsChecked = value;
             }
         }
@@ -100,6 +99,18 @@ namespace MahoushoujoDesktop
                     _isRandom = value;
                     Reset ();
                 }
+            }
+        }
+        public static TimeSpan TimerInterval
+        {
+            get
+            {
+                return timer . Interval;
+            }
+            set
+            {
+                timer . Interval = value;
+                //Default . TimerInterval = value;
             }
         }
 
@@ -231,7 +242,6 @@ namespace MahoushoujoDesktop
             SetWallpaper ( info );
 
             Default . LastImage = info;
-            Default . Save ();
         }
         private static async void SetWallpaper ( JsonImageInfo info )
         {

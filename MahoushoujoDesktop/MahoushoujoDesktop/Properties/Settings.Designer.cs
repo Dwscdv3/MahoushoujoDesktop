@@ -69,5 +69,17 @@ namespace MahoushoujoDesktop.Properties {
                 this["LastImage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double NextIntervalSliderValue {
+            get {
+                return ((double)(this["NextIntervalSliderValue"]));
+            }
+            set {
+                this["NextIntervalSliderValue"] = value;
+            }
+        }
     }
 }

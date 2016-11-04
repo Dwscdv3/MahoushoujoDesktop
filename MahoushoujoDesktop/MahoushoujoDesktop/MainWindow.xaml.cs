@@ -13,8 +13,11 @@ using System . Windows . Media;
 using System . Windows . Media . Animation;
 using System . Windows . Media . Imaging;
 using Gma . System . MouseKeyHook;
+using MahoushoujoDesktop . Native;
 using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Mahoushoujo;
+using static MahoushoujoDesktop . Native . Managed;
+using static MahoushoujoDesktop . Native . User32;
 using static MahoushoujoDesktop . Properties . Settings;
 using WM = MahoushoujoDesktop . Native . WindowMessage;
 
@@ -40,8 +43,18 @@ namespace MahoushoujoDesktop
             keyboardEvent . KeyDown += KeyboardEvent_KeyDown;
         }
 
+        IntPtr hWnd;
         private void window_Loaded ( object sender , RoutedEventArgs e )
         {
+            hWnd = new WindowInteropHelper ( this ) . Handle;
+            //SetWindowLong ( hWnd , (int) WindowLongFlags . GWL_EXSTYLE ,
+            //    GetWindowLong ( hWnd , (int) WindowLongFlags . GWL_EXSTYLE ) |
+            //    (int) ExtendedWindowStyle . NoActivate );
+            //SetWindowPos ( hWnd , HWND_BOTTOM , 0 , 0 , 0 , 0 ,
+            //    SetWindowPosFlags . SWP_NOMOVE |
+            //    SetWindowPosFlags . SWP_NOSIZE |
+            //    SetWindowPosFlags . SWP_NOACTIVATE );
+
             #region 创建窗口句柄文件
             if ( File . Exists ( FileNameWindowHandle ) )
             {
@@ -49,16 +62,33 @@ namespace MahoushoujoDesktop
             }
             FileInfo file = new FileInfo ( FileNameWindowHandle );
             var stream = file . CreateText ();
-            stream . Write ( new WindowInteropHelper ( this ) . Handle . ToString () );
+            stream . Write ( hWnd . ToString () );
             stream . Flush ();
             stream . Close ();
             file . Attributes = file . Attributes | FileAttributes . Hidden;
             #endregion
 
             progressCircleExit . StrokeThickness = 5.0;
-
+            
             Mahoushoujo . Init ();
             buttonMainSwitch . IsChecked = Default . MainSwitch;
+            sliderInterval . Value = Default . NextIntervalSliderValue;
+        }
+
+        private void window_Activated ( object sender , EventArgs e )
+        {
+            //SetWindowPos ( hWnd , HWND_BOTTOM , 0 , 0 , 0 , 0 ,
+            //    SetWindowPosFlags . SWP_NOMOVE |
+            //    SetWindowPosFlags . SWP_NOSIZE |
+            //    SetWindowPosFlags . SWP_NOACTIVATE );
+        }
+
+        private void window_SizeChanged ( object sender , EventArgs e )
+        {
+            //if ( WindowState == WindowState . Minimized )
+            //{
+            //    WindowState = WindowState . Normal;
+            //}
         }
 
         // https://social.msdn.microsoft.com/Forums/zh-CN/6a9bca0a-c1e3-48b2-b1ba-716233e8a080
@@ -154,9 +184,24 @@ namespace MahoushoujoDesktop
         {
             progressCircleExitStoryboard . Stop ();
         }
+
         private void rectHide_MouseLeave ( object sender , MouseEventArgs e )
         {
             progressCircleExitStoryboard . Stop ();
+        }
+
+        private void sliderInterval_LostMouseCapture ( object sender , MouseEventArgs e )
+        {
+            TimerInterval = NextIntervals [ (int) sliderInterval . Value ] . TimeSpan;
+            Default . NextIntervalSliderValue = sliderInterval . Value;
+        }
+
+        private void sliderInterval_ValueChanged ( object sender , RoutedPropertyChangedEventArgs<double> e )
+        {
+            if ( textInterval != null )
+            {
+                textInterval . Text = NextIntervals [ (int) e . NewValue ] . Description;
+            }
         }
         private void ProgressCircleExit_Completed ( object sender , EventArgs e )
         {

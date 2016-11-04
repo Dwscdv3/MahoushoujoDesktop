@@ -104,7 +104,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Native\WindowMessage.cs" />
+    <Compile Include="Native\Macro.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

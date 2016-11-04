@@ -1,9 +1,6 @@
 ﻿using System;
-using System . Collections . Generic;
-using System . Linq;
 using System . Runtime . InteropServices;
-using System . Text;
-using System . Threading . Tasks;
+using static MahoushoujoDesktop . Native . Managed;
 
 namespace MahoushoujoDesktop . Native
 {
@@ -18,5 +15,14 @@ namespace MahoushoujoDesktop . Native
         [return: MarshalAs ( UnmanagedType . Bool )]
         [DllImport ( "user32.dll" , SetLastError = true , CharSet = CharSet . Auto )]
         public static extern bool PostMessage ( IntPtr hWnd , uint Msg , IntPtr wParam , IntPtr lParam );
+
+        [DllImport ( "user32.dll" , SetLastError = true )]
+        public static extern bool SetWindowPos ( IntPtr hWnd , IntPtr hWndInsertAfter , int X , int Y , int cx , int cy , SetWindowPosFlags uFlags );
+        [DllImport ( "user32.dll" , SetLastError = true , CharSet = CharSet . Auto )]
+        public static extern bool SendNotifyMessage ( IntPtr hWnd , uint Msg , UIntPtr wParam , IntPtr lParam );
+        [DllImport ( "user32.dll" )]
+        public static extern int SetWindowLong ( IntPtr hWnd , int nIndex , int dwNewLong );
+        [DllImport ( "user32.dll" , SetLastError = true )]
+        public static extern int GetWindowLong ( IntPtr hWnd , int nIndex );
     }
 }
