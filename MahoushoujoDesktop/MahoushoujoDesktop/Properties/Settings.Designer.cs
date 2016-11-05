@@ -81,5 +81,17 @@ namespace MahoushoujoDesktop.Properties {
                 this["NextIntervalSliderValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserAccessToken {
+            get {
+                return ((string)(this["UserAccessToken"]));
+            }
+            set {
+                this["UserAccessToken"] = value;
+            }
+        }
     }
 }

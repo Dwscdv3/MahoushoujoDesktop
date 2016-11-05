@@ -146,7 +146,7 @@ namespace MahoushoujoDesktop
 
             timer . Interval = Default . TimerInterval;
             timer . Tick += timer_Tick;
-            timerProgressBarNext . Interval = TimeSpan . FromMilliseconds ( 16.6 );
+            timerProgressBarNext . Interval = TimeSpan . FromMilliseconds ( 100 );
             timerProgressBarNext . Tick += TimerProgressBarNext_Tick;
             if ( Default . MainSwitch )
             {
@@ -197,7 +197,7 @@ namespace MahoushoujoDesktop
             }
         }
 
-        public static void SetInfo ( JsonImageInfo info )
+        public static async void SetInfo ( JsonImageInfo info )
         {
             #region 详细信息::ID
             mainWindow . textId . Inlines . Clear ();
@@ -240,20 +240,41 @@ namespace MahoushoujoDesktop
             //}
             #endregion
 
-            SetWallpaper ( info );
+            var succeeded = await DownloadAndSetWallpaper ( info );
 
             Default . LastImage = info;
         }
-        private static async void SetWallpaper ( JsonImageInfo info )
+        private static async Task<bool> DownloadAndSetWallpaper ( JsonImageInfo info )
         {
-            bool success = false;
+            DownloadResult result;
+            int retry = 0;
             do
             {
-                success = await DownloadWeiboImage ( info . 微博图片 );
-            } while ( success == false );
+                result = await SaveWeiboImage ( info . 微博图片 );
+                retry++;
+            } while ( result == DownloadResult . Failed && retry < 3 );
 
-            await Task . Delay ( 50 );
-            SetWallpaperLegacy ( Environment . CurrentDirectory + "\\" + FileNameCurrentImage );
+            if ( result != DownloadResult . Succeeded )
+            {
+                if ( !string . IsNullOrWhiteSpace ( info . 备份 ) )
+                {
+                    retry = 0;
+                    do
+                    {
+                        result = await SaveBackupImage ( info . 备份 );
+                        retry++;
+                    } while ( result == DownloadResult . Failed && retry < 2 );
+                }
+            }
+
+            if ( result == DownloadResult . Succeeded )
+            {
+                await Task . Delay ( 50 );
+                SetWallpaperLegacy ( Environment . CurrentDirectory + "\\" + FileNameCurrentImage );
+                return true;
+            }
+
+            return false;
         }
 
         private static void IdLink_OnClick ( object sender , RoutedEventArgs e )
@@ -342,29 +363,43 @@ namespace MahoushoujoDesktop
             }
         }
 
-        private static async Task<bool> DownloadWeiboImage ( string hash )
+        private static async Task<DownloadResult> SaveWeiboImage ( string hash )
         {
             byte [] data = null;
 
-            IsDownloading = true;
-            try
+            data = await DownloadData ( getWeiboImageUrl ( hash ) );
+            if ( data == null )
             {
-                data = await net . GetBytes ( getWeiboImageUrl ( hash ) , updateProgressBar );
+                return DownloadResult . Failed;
             }
-            catch ( WebException ex )
+            if ( data . Length < 10000 )
             {
-                Debug . WriteLine ( ex + "\r\n\t" + ex . Message );
-                return false;
+                return DownloadResult . Banned;
             }
-            finally
-            {
-                IsDownloading = false;
-            }
+            SaveImage ( data );
 
+            return DownloadResult . Succeeded;
+        }
+        private static async Task<DownloadResult> SaveBackupImage ( string url )
+        {
+            byte [] data = null;
+
+            data = await DownloadData ( url );
+            if ( data == null )
+            {
+                return DownloadResult . Failed;
+            }
+            SaveImage ( data );
+
+            return DownloadResult . Succeeded;
+        }
+
+        private static void SaveImage ( byte [] data )
+        {
             var path = FileNameCurrentImage;
             var file = new FileInfo ( path );
             FileStream stream = null;
-            if ( file . Exists )
+            if ( File . Exists ( path ) )
             {
                 stream = file . OpenWrite ();
             }
@@ -376,8 +411,27 @@ namespace MahoushoujoDesktop
             stream . Flush ( true );
             stream . Close ();
             file . Attributes = file . Attributes | FileAttributes . Hidden;
+        }
 
-            return true;
+        private static async Task<byte []> DownloadData ( string url )
+        {
+            byte [] data;
+            IsDownloading = true;
+            try
+            {
+                data = await net . GetBytes ( url , updateProgressBar );
+            }
+            catch ( WebException ex )
+            {
+                Debug . WriteLine ( ex + "\r\n\t" + ex . Message );
+                IsDownloading = false;
+                return null;
+            }
+            finally
+            {
+                IsDownloading = false;
+            }
+            return data;
         }
         static string getWeiboImageUrl ( string hash )
         {
@@ -404,5 +458,11 @@ namespace MahoushoujoDesktop
         UserLike,
         Random = int . MaxValue, // TODO: Under consideration
         Icarus = -1
+    }
+    public enum DownloadResult
+    {
+        Succeeded,
+        Failed,
+        Banned
     }
 }
