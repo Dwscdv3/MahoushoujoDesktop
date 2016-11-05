@@ -4,12 +4,74 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MahoushoujoDesktop"
-        xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls" x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
+        xmlns:local.UI="clr-namespace:MahoushoujoDesktop.UI"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
+    
+        x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"
         Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded" Background="{DynamicResource BlackLinearGradientBrush}" Activated="window_Activated" SizeChanged="window_SizeChanged" Topmost="True">
 
     <Window.Resources>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#00000000"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#7FFFFFFF"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="SelectionOpacity" Value="0.75"/>
+            <Style.Triggers>
+                <Trigger Property="Text" Value="{x:Null}">
+                    <Setter Property="Background" Value="{DynamicResource Hint}"/>
+                </Trigger>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Background" Value="{DynamicResource Hint}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#00000000"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#7FFFFFFF"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="SelectionOpacity" Value="0.75"/>
+            <Style.Triggers>
+                <Trigger Property="local.UI:PasswordHelper.Password" Value="{x:Null}">
+                    <Setter Property="Background" Value="{DynamicResource Hint}"/>
+                </Trigger>
+                <Trigger Property="local.UI:PasswordHelper.Password" Value="">
+                    <Setter Property="Background" Value="{DynamicResource Hint}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="FlatButtonStyle" TargetType="{x:Type ButtonBase}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#3FFFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.25"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FlatIconButtonStyle" TargetType="{x:Type ButtonBase}">
             <Setter Property="FontSize" Value="32px"/>
             <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="50"/>
@@ -29,6 +91,34 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.25"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FlatGradientButtonStyle" TargetType="{x:Type ButtonBase}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Grid>
+                            <Rectangle x:Name="highlight" Fill="{TemplateBinding Background}" Opacity="0"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" TargetName="highlight" Value="0.5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" TargetName="highlight" Value="1"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.25"/>
@@ -198,6 +288,57 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel x:Name="stackPanelSetting" Grid.RowSpan="2">
+                <StackPanel x:Name="stackPanelLogin" Margin="10,-150,10,10">
+                    <StackPanel.Resources>
+                        <Storyboard x:Key="StackPanelLoginExpandStoryboard">
+                            <ThicknessAnimation
+                                Storyboard.TargetName="stackPanelLogin"
+                                Storyboard.TargetProperty="Margin"
+                                To="10" Duration="0:0:0.4"/>
+                        </Storyboard>
+                        <Storyboard x:Key="StackPanelLoginShrinkStoryboard">
+                            <ThicknessAnimation
+                                Storyboard.TargetName="stackPanelLogin"
+                                Storyboard.TargetProperty="Margin"
+                                To="10,-150,10,10" Duration="0:0:0.4"/>
+                        </Storyboard>
+                    </StackPanel.Resources>
+                    <TextBox x:Name="textBoxUsername" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FFFF7FBF">
+                        <TextBox.Resources>
+                            <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <TextBlock Text="@" Foreground="White"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <PasswordBox x:Name="passwordBox" Style="{DynamicResource PasswordBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FF3FFF7F" PasswordChar="★" FontFamily="Segoe UI" local.UI:PasswordHelper.Attach="True">
+                        <PasswordBox.Resources>
+                            <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <TextBlock Text="☆" Foreground="White"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </PasswordBox.Resources>
+                    </PasswordBox>
+                    <Button x:Name="buttonLogin" Style="{DynamicResource FlatGradientButtonStyle}" Content="古ta妈黑暗之神！">
+                        <Button.Background>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FFBF00FF"/>
+                                <GradientStop Offset="1" Color="#00BF00FF"/>
+                            </RadialGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="buttonSignup" Style="{DynamicResource FlatGradientButtonStyle}" Content="← 去签订契约" Click="buttonSignup_Click">
+                        <Button.Background>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FFFF7FBF"/>
+                                <GradientStop Offset="1" Color="#00FF7FBF"/>
+                            </RadialGradientBrush>
+                        </Button.Background>
+                    </Button>
+                </StackPanel>
+                <Button Style="{DynamicResource FlatButtonStyle}"/>
                 <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
                 <TextBlock Text="这里是留白" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,5,10,0"/>
                 <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,5,10,0"/>
@@ -239,15 +380,15 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                     <Button x:Name="buttonPrev"
-                            Style="{DynamicResource FlatButtonStyle}"
+                            Style="{DynamicResource FlatIconButtonStyle}"
                             Content="&#xE76B;" FontFamily="Segoe MDL2 Assets"
                             Click="buttonPrev_Click" IsEnabled="False"/>
                     <ToggleButton x:Name="buttonMainSwitch"
-                                  Style="{DynamicResource FlatButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
+                                  Style="{DynamicResource FlatIconButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
                                   Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
                                   Width="64" Height="64" Click="buttonMainSwitch_Click" Margin="10,0"/>
                     <Button x:Name="buttonNext"
-                            Style="{DynamicResource FlatButtonStyle}"
+                            Style="{DynamicResource FlatIconButtonStyle}"
                             Content="&#xE76C;" FontFamily="Segoe MDL2 Assets"
                             Click="buttonNext_Click"/>
                 </StackPanel>

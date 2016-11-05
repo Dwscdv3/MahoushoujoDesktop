@@ -1,5 +1,6 @@
 ﻿using System;
 using System . Collections . Generic;
+using System . Diagnostics;
 using System . IO;
 using System . Linq;
 using System . Text;
@@ -213,6 +214,11 @@ namespace MahoushoujoDesktop
         private void ProgressCircleExit_Completed ( object sender , EventArgs e )
         {
             Close ();
+        }
+
+        private void buttonSignup_Click ( object sender , RoutedEventArgs e )
+        {
+            Process . Start ( "http://api.mouto.org/reg.html#!redirect=http%3A%2F%2Fsyouzyo.org%2F" );
         }
 
     }
