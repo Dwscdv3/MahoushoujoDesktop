@@ -58,7 +58,7 @@ namespace MahoushoujoDesktop . UI
 
         private void buttonTag_Click ( object sender , RoutedEventArgs e )
         {
-
+            TagClick?.Invoke ( this , new RoutedEventArgs () );
         }
     }
 }

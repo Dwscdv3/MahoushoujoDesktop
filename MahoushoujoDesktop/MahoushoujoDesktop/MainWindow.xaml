@@ -351,8 +351,8 @@
                     <TextBlock x:Name="textInterval" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="14"/>
                 </Grid>
                 <WrapPanel>
-                    <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景" />
-                    <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5" />
+                    <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景"/>
+                    <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
                 </WrapPanel>
             </StackPanel>
             <StackPanel Grid.Row="1">
