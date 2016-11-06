@@ -16,11 +16,13 @@ using System . Windows . Shapes;
 namespace MahoushoujoDesktop . UI
 {
     /// <summary>
-    /// Tag.xaml 的交互逻辑
+    /// ButtonTag.xaml 的交互逻辑
     /// </summary>
-    public partial class Tag : UserControl
+    public partial class ButtonTag : UserControl
     {
         public event RoutedEventHandler TagClick;
+
+
 
         public string Text
         {
@@ -28,13 +30,13 @@ namespace MahoushoujoDesktop . UI
             set { SetValue ( TextProperty , value ); }
         }
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty . Register ( "Text" , typeof ( string ) , typeof ( Tag ) ,
+            DependencyProperty . Register ( "Text" , typeof ( string ) , typeof ( ButtonTag ) ,
                 new PropertyMetadata (
                     "" ,
                     ( d , e ) =>
-                    {
-                        ( d as Tag ) . textTag . Text = (string) e . NewValue;
-                    } )
+                      {
+                          ( d as ButtonTag ) . textTag . Text = (string) e . NewValue;
+                      } )
                 );
         public new Brush Background
         {
@@ -42,21 +44,28 @@ namespace MahoushoujoDesktop . UI
             set { SetValue ( BackgroundProperty , value ); }
         }
         public static readonly new DependencyProperty BackgroundProperty =
-            DependencyProperty . Register ( "Background" , typeof ( Brush ) , typeof ( Tag ) ,
+            DependencyProperty . Register ( "Background" , typeof ( Brush ) , typeof ( ButtonTag ) ,
                 new PropertyMetadata (
                     null ,
                     ( d , e ) =>
                     {
-                        ( d as Tag ) . rectMain . Fill = (Brush) e . NewValue;
+                        ( d as ButtonTag ) . rectMain . Fill = (Brush) e . NewValue;
                     } )
                 );
 
-        public Tag ()
+
+
+        public ButtonTag ()
         {
             InitializeComponent ();
         }
 
         private void buttonTag_Click ( object sender , RoutedEventArgs e )
+        {
+            
+        }
+
+        private void buttonDelete_Click ( object sender , RoutedEventArgs e )
         {
 
         }

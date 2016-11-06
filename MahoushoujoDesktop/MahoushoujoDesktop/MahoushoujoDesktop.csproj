@@ -79,6 +79,9 @@
     <Compile Include="Network.cs" />
     <Compile Include="SystemUtil.cs" />
     <Compile Include="UI\PasswordHelper.cs" />
+    <Compile Include="UI\ButtonTag.xaml.cs">
+      <DependentUpon>ButtonTag.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Tag.xaml.cs">
       <DependentUpon>Tag.xaml</DependentUpon>
     </Compile>
@@ -103,6 +106,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\ButtonTag.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Tag.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
