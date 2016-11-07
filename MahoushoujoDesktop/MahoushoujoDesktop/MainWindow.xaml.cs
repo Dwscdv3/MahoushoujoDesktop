@@ -30,7 +30,11 @@ namespace MahoushoujoDesktop
     public partial class MainWindow : Window
     {
         IKeyboardEvents keyboardEvent = Hook . GlobalEvents ();
-        Storyboard slideOutStoryboard = null, slideInStoryboard = null, progressCircleExitStoryboard;
+        Storyboard slideOutStoryboard = null,
+                   slideInStoryboard = null,
+                   progressCircleExitStoryboard = null,
+                   stackPanelLoginExpandStoryboard = null,
+                   stackPanelLoginCollapseStoryboard = null;
 
         public MainWindow ()
         {
@@ -39,13 +43,15 @@ namespace MahoushoujoDesktop
 
             slideOutStoryboard = (Storyboard) Resources [ "SlideOutStoryboard" ];
             slideInStoryboard = (Storyboard) Resources [ "SlideInStoryboard" ];
+            stackPanelLoginExpandStoryboard = (Storyboard) Resources [ "StackPanelLoginExpandStoryboard" ];
+            stackPanelLoginCollapseStoryboard = (Storyboard) Resources [ "StackPanelLoginCollapseStoryboard" ];
             progressCircleExitStoryboard = (Storyboard) Resources [ "ProgressCircleExitStoryboard" ];
 
             keyboardEvent . KeyDown += KeyboardEvent_KeyDown;
         }
 
         IntPtr hWnd;
-        private void window_Loaded ( object sender , RoutedEventArgs e )
+        private async void window_Loaded ( object sender , RoutedEventArgs e )
         {
             hWnd = new WindowInteropHelper ( this ) . Handle;
             //SetWindowLong ( hWnd , (int) WindowLongFlags . GWL_EXSTYLE ,
@@ -76,6 +82,20 @@ namespace MahoushoujoDesktop
             sliderInterval . Value = Default . NextIntervalSliderValue;
             textInterval . Text = NextIntervals [ (int) sliderInterval . Value ] . Description;
             SetTimerIntervalBySliderValue ();
+
+            CurrentTab = 0;
+
+            if ( !string . IsNullOrEmpty ( Default . UserAccessToken ) )
+            {
+                var user = await User . GetUserInfoByToken ( Default . UserAccessToken );
+                if ( user . Info . uid > 0 )
+                {
+                    LogInUser = user;
+                    SetUserPanel ();
+                }
+            }
+
+            // TODO: Load user token and sign in
         }
 
         private void window_Activated ( object sender , EventArgs e )
@@ -211,9 +231,57 @@ namespace MahoushoujoDesktop
                 textInterval . Text = NextIntervals [ (int) e . NewValue ] . Description;
             }
         }
+
         private void ProgressCircleExit_Completed ( object sender , EventArgs e )
         {
             Close ();
+        }
+
+        bool isLoggingIn = false;
+        private async void buttonLogin_Click ( object sender , RoutedEventArgs e )
+        {
+            if ( !isLoggingIn )
+            {
+                User user = null;
+                try
+                {
+                    isLoggingIn = true;
+                    user = await User . LogIn ( textBoxUsername . Text , passwordBox . Password );
+                }
+                catch ( Exception ex )
+                {
+                    Debug . WriteLine ( ex . Message );
+                }
+                finally
+                {
+                    isLoggingIn = false;
+                }
+
+                if ( user != null )
+                {
+                    LogInUser = user;
+                    SetUserPanel ();
+                    isUserLoginExpanded = false;
+                }
+                else
+                {
+                    // TODO: Log in fail
+                }
+            }
+        }
+
+        private void SetUserPanel ()
+        {
+            SetEllipseUserAvatar ();
+
+        }
+
+        private void SetEllipseUserAvatar ()
+        {
+            if ( !string . IsNullOrEmpty ( LogInUser . Info . avatar ) )
+            {
+                ( (ImageBrush) ellipseUserAvatar . Fill ) . ImageSource = new BitmapImage ( new Uri ( LogInUser . Info . avatar ) );
+            }
         }
 
         private void buttonSignup_Click ( object sender , RoutedEventArgs e )
@@ -221,5 +289,242 @@ namespace MahoushoujoDesktop
             Process . Start ( "http://api.mouto.org/reg.html#!redirect=http%3A%2F%2Fsyouzyo.org%2F" );
         }
 
+        private void tabHeader_Click ( object sender , RoutedEventArgs e )
+        {
+            var element = sender as FrameworkElement;
+            var parent = element . Parent as FrameworkElement;
+            var grandParent = parent . Parent as Panel;
+            int index = -1;
+            foreach ( var item in grandParent . Children )
+            {
+                index++;
+                if ( parent == item )
+                {
+                    CurrentTab = index;
+                    break;
+                }
+            }
+        }
+
+        bool _isUserLoginExpanded = false;
+        bool isUserLoginExpanded
+        {
+            get
+            {
+                return _isUserLoginExpanded;
+            }
+            set
+            {
+                _isUserLoginExpanded = value;
+                if ( value )
+                {
+                    stackPanelLoginExpandStoryboard . Begin ();
+                }
+                else
+                {
+                    stackPanelLoginCollapseStoryboard . Begin ();
+                }
+            }
+        }
+        private void buttonUserAvatar_Click ( object sender , RoutedEventArgs e )
+        {
+            if ( IsLoggedIn )
+            {
+                tabHeader_Click ( sender , e );
+            }
+            else
+            {
+                if ( isUserLoginExpanded )
+                {
+                    isUserLoginExpanded = false;
+                }
+                else
+                {
+                    isUserLoginExpanded = true;
+                }
+            }
+        }
+
+        private void passwordBox_KeyDown ( object sender , KeyEventArgs e )
+        {
+            if ( e . Key == Key . Enter )
+            {
+                buttonLogin . Focus ();
+                buttonLogin_Click ( this , new RoutedEventArgs () );
+            }
+        }
+
+        const int TabSwitchAnimationDurationInMilliseconds = 150;
+        const int TabSwitchAnimationMovingDistance = 25;
+        int _currentTab = -1;
+        public int CurrentTab
+        {
+            get
+            {
+                return _currentTab;
+            }
+            set
+            {
+                UIElement oldTab = null;
+                if ( _currentTab >= 0 )
+                {
+                    oldTab = gridTab . Children [ _currentTab ];
+                }
+                var newTab = gridTab . Children [ value ];
+
+                Grid . SetColumn ( ellipseSelectedTab , value + 1 );
+
+                if ( value > _currentTab )
+                {
+                    #region Storyboard - Tab 向左滑动
+                    Storyboard sbOut = new Storyboard ();
+
+                    if ( oldTab != null )
+                    {
+                        ThicknessAnimation marginOut = new ThicknessAnimation (
+                            new Thickness ( 0 ) ,
+                            new Thickness ( -TabSwitchAnimationMovingDistance , 0 , TabSwitchAnimationMovingDistance , 0 ) ,
+                            new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                        Storyboard . SetTarget ( marginOut , oldTab );
+                        Storyboard . SetTargetProperty ( marginOut , new PropertyPath ( "Margin" ) );
+                        sbOut . Children . Add ( marginOut );
+
+                        DoubleAnimation opacityOut = new DoubleAnimation (
+                            1 , 0 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                        Storyboard . SetTarget ( opacityOut , oldTab );
+                        Storyboard . SetTargetProperty ( opacityOut , new PropertyPath ( "Opacity" ) );
+                        sbOut . Children . Add ( opacityOut );
+                    }
+
+                    if ( newTab != null )
+                    {
+                        if ( oldTab != null )
+                        {
+                            sbOut . Completed += ( sender , e ) =>
+                            {
+                                Storyboard sbIn = new Storyboard ();
+
+                                ThicknessAnimation marginIn = new ThicknessAnimation (
+                                    new Thickness ( TabSwitchAnimationMovingDistance , 0 , -TabSwitchAnimationMovingDistance , 0 ) ,
+                                    new Thickness ( 0 ) ,
+                                    new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) )
+                                );
+                                Storyboard . SetTarget ( marginIn , newTab );
+                                Storyboard . SetTargetProperty ( marginIn , new PropertyPath ( "Margin" ) );
+                                sbIn . Children . Add ( marginIn );
+
+                                DoubleAnimation opacityIn = new DoubleAnimation (
+                                    0 , 1 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                                Storyboard . SetTarget ( opacityIn , newTab );
+                                Storyboard . SetTargetProperty ( opacityIn , new PropertyPath ( "Opacity" ) );
+                                sbIn . Children . Add ( opacityIn );
+
+                                sbIn . Begin ();
+                            };
+                        }
+                        else
+                        {
+                            Storyboard sbIn = new Storyboard ();
+
+                            ThicknessAnimation marginIn = new ThicknessAnimation (
+                                new Thickness ( TabSwitchAnimationMovingDistance , 0 , -TabSwitchAnimationMovingDistance , 0 ) ,
+                                new Thickness ( 0 ) ,
+                                new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) )
+                            );
+                            Storyboard . SetTarget ( marginIn , newTab );
+                            Storyboard . SetTargetProperty ( marginIn , new PropertyPath ( "Margin" ) );
+                            sbIn . Children . Add ( marginIn );
+
+                            DoubleAnimation opacityIn = new DoubleAnimation (
+                                0 , 1 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                            Storyboard . SetTarget ( opacityIn , newTab );
+                            Storyboard . SetTargetProperty ( opacityIn , new PropertyPath ( "Opacity" ) );
+                            sbIn . Children . Add ( opacityIn );
+
+                            sbIn . Begin ();
+                        }
+                    }
+
+                    sbOut . Begin ();
+                    #endregion
+                }
+                else if ( value < _currentTab )
+                {
+                    #region Storyboard - Tab 向右滑动
+                    Storyboard sbOut = new Storyboard ();
+
+                    if ( oldTab != null )
+                    {
+                        ThicknessAnimation marginOut = new ThicknessAnimation (
+                            new Thickness ( 0 ) ,
+                            new Thickness ( TabSwitchAnimationMovingDistance , 0 , -TabSwitchAnimationMovingDistance , 0 ) ,
+                            new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                        Storyboard . SetTarget ( marginOut , oldTab );
+                        Storyboard . SetTargetProperty ( marginOut , new PropertyPath ( "Margin" ) );
+                        sbOut . Children . Add ( marginOut );
+
+                        DoubleAnimation opacityOut = new DoubleAnimation (
+                            1 , 0 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                        Storyboard . SetTarget ( opacityOut , oldTab );
+                        Storyboard . SetTargetProperty ( opacityOut , new PropertyPath ( "Opacity" ) );
+                        sbOut . Children . Add ( opacityOut );
+                    }
+
+                    if ( newTab != null )
+                    {
+                        if ( oldTab != null )
+                        {
+                            sbOut . Completed += ( sender , e ) =>
+                            {
+                                Storyboard sbIn = new Storyboard ();
+
+                                ThicknessAnimation marginIn = new ThicknessAnimation (
+                                    new Thickness ( -TabSwitchAnimationMovingDistance , 0 , TabSwitchAnimationMovingDistance , 0 ) ,
+                                    new Thickness ( 0 ) ,
+                                    new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) )
+                                );
+                                Storyboard . SetTarget ( marginIn , newTab );
+                                Storyboard . SetTargetProperty ( marginIn , new PropertyPath ( "Margin" ) );
+                                sbIn . Children . Add ( marginIn );
+
+                                DoubleAnimation opacityIn = new DoubleAnimation (
+                                    0 , 1 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                                Storyboard . SetTarget ( opacityIn , newTab );
+                                Storyboard . SetTargetProperty ( opacityIn , new PropertyPath ( "Opacity" ) );
+                                sbIn . Children . Add ( opacityIn );
+
+                                sbIn . Begin ();
+                            };
+                        }
+                        else
+                        {
+                            Storyboard sbIn = new Storyboard ();
+
+                            ThicknessAnimation marginIn = new ThicknessAnimation (
+                                new Thickness ( -TabSwitchAnimationMovingDistance , 0 , TabSwitchAnimationMovingDistance , 0 ) ,
+                                new Thickness ( 0 ) ,
+                                new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) )
+                            );
+                            Storyboard . SetTarget ( marginIn , newTab );
+                            Storyboard . SetTargetProperty ( marginIn , new PropertyPath ( "Margin" ) );
+                            sbIn . Children . Add ( marginIn );
+
+                            DoubleAnimation opacityIn = new DoubleAnimation (
+                                0 , 1 , new Duration ( TimeSpan . FromMilliseconds ( TabSwitchAnimationDurationInMilliseconds ) ) );
+                            Storyboard . SetTarget ( opacityIn , newTab );
+                            Storyboard . SetTargetProperty ( opacityIn , new PropertyPath ( "Opacity" ) );
+                            sbIn . Children . Add ( opacityIn );
+
+                            sbIn . Begin ();
+                        }
+                    }
+
+                    sbOut . Begin ();
+                    #endregion
+                }
+
+                _currentTab = value;
+            }
+        }
     }
 }

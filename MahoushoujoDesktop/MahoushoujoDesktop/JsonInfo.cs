@@ -1,5 +1,7 @@
 ﻿using System;
 using System . Collections . Generic;
+using System . Collections . ObjectModel;
+using System . ComponentModel;
 
 namespace MahoushoujoDesktop
 {
@@ -53,7 +55,7 @@ namespace MahoushoujoDesktop
     public class JsonUserInfo
     {
         public int uid { get; set; }
-        public long wbid { get; set; }
+        public string wbid { get; set; }
         public string name { get; set; }
         public string avatar { get; set; }
         public string des { get; set; }

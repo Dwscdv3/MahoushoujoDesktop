@@ -7,12 +7,42 @@
         xmlns:local.UI="clr-namespace:MahoushoujoDesktop.UI"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     
         x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"
+        TextOptions.TextHintingMode="Animated"
         Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded" Background="{DynamicResource BlackLinearGradientBrush}" Activated="window_Activated" SizeChanged="window_SizeChanged" Topmost="True">
 
     <Window.Resources>
+        <Storyboard x:Key="StackPanelLoginExpandStoryboard">
+            <ThicknessAnimation
+                Storyboard.TargetName="stackPanelLogin"
+                Storyboard.TargetProperty="Margin"
+                To="10" Duration="0:0:0.25"/>
+            <DoubleAnimation
+                Storyboard.TargetName="textDefaultAvatar"
+                Storyboard.TargetProperty="Opacity"
+                To="0" Duration="0:0:0.25"/>
+            <DoubleAnimation
+                Storyboard.TargetName="textCollapse"
+                Storyboard.TargetProperty="Opacity"
+                To="1" Duration="0:0:0.25"/>
+        </Storyboard>
+        <Storyboard x:Key="StackPanelLoginCollapseStoryboard">
+            <ThicknessAnimation
+                Storyboard.TargetName="stackPanelLogin"
+                Storyboard.TargetProperty="Margin"
+                To="{x:Null}" Duration="0:0:0.25"/>
+            <DoubleAnimation
+                Storyboard.TargetName="textDefaultAvatar"
+                Storyboard.TargetProperty="Opacity"
+                To="1" Duration="0:0:0.25"/>
+            <DoubleAnimation
+                Storyboard.TargetName="textCollapse"
+                Storyboard.TargetProperty="Opacity"
+                To="0" Duration="0:0:0.25"/>
+        </Storyboard>
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
             <Setter Property="Background" Value="#00000000"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -287,22 +317,8 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel x:Name="stackPanelSetting" Grid.RowSpan="2">
-                <StackPanel x:Name="stackPanelLogin" Margin="10,-150,10,10">
-                    <StackPanel.Resources>
-                        <Storyboard x:Key="StackPanelLoginExpandStoryboard">
-                            <ThicknessAnimation
-                                Storyboard.TargetName="stackPanelLogin"
-                                Storyboard.TargetProperty="Margin"
-                                To="10" Duration="0:0:0.4"/>
-                        </Storyboard>
-                        <Storyboard x:Key="StackPanelLoginShrinkStoryboard">
-                            <ThicknessAnimation
-                                Storyboard.TargetName="stackPanelLogin"
-                                Storyboard.TargetProperty="Margin"
-                                To="10,-150,10,10" Duration="0:0:0.4"/>
-                        </Storyboard>
-                    </StackPanel.Resources>
+            <StackPanel x:Name="stackPanelMain" Grid.RowSpan="2">
+                <StackPanel x:Name="stackPanelLogin" Margin="10,-120,10,10">
                     <TextBox x:Name="textBoxUsername" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FFFF7FBF">
                         <TextBox.Resources>
                             <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
@@ -312,7 +328,7 @@
                             </VisualBrush>
                         </TextBox.Resources>
                     </TextBox>
-                    <PasswordBox x:Name="passwordBox" Style="{DynamicResource PasswordBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FF3FFF7F" PasswordChar="★" FontFamily="Segoe UI" local.UI:PasswordHelper.Attach="True">
+                    <PasswordBox x:Name="passwordBox" Style="{DynamicResource PasswordBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FF3FFF7F" PasswordChar="★" FontFamily="Segoe UI" local.UI:PasswordHelper.Attach="True" KeyDown="passwordBox_KeyDown">
                         <PasswordBox.Resources>
                             <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
                                 <VisualBrush.Visual>
@@ -321,7 +337,7 @@
                             </VisualBrush>
                         </PasswordBox.Resources>
                     </PasswordBox>
-                    <Button x:Name="buttonLogin" Style="{DynamicResource FlatGradientButtonStyle}" Content="古ta妈黑暗之神！">
+                    <Button x:Name="buttonLogin" Style="{DynamicResource FlatGradientButtonStyle}" Content="古ta妈黑暗之神！" Click="buttonLogin_Click">
                         <Button.Background>
                             <RadialGradientBrush>
                                 <GradientStop Color="#FFBF00FF"/>
@@ -338,22 +354,65 @@
                         </Button.Background>
                     </Button>
                 </StackPanel>
-                <Button Style="{DynamicResource FlatButtonStyle}"/>
-                <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
-                <TextBlock Text="这里是留白" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,5,10,0"/>
-                <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,5,10,0"/>
-                <Grid Margin="10,10,10,0">
+                <Grid x:Name="gridTabHeader" Height="60" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
                     </Grid.ColumnDefinitions>
-                    <Slider x:Name="sliderInterval" Style="{DynamicResource SliderStyle}" BorderBrush="#FFDFDFDF" Foreground="#FFFF7FBF" Background="#3F7F7F7F" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Maximum="{x:Static local:Const.NextIntervalsCount}" SmallChange="1" Margin="0,0,5,0" ValueChanged="sliderInterval_ValueChanged" LostMouseCapture="sliderInterval_LostMouseCapture"/>
-                    <TextBlock x:Name="textInterval" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="14"/>
+                    <Grid Grid.Column="1" Margin="5">
+                        <TextBlock x:Name="textTabSetting" Text="&#xE115;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                        <Button x:Name="buttonTabSetting" Style="{DynamicResource FlatButtonStyle}" Click="tabHeader_Click">
+                            <Button.OpacityMask>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="Black" Offset="1"/>
+                                    <GradientStop Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.OpacityMask>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="2" Margin="5">
+                        <Ellipse Fill="#3FFFFFFF"/>
+                        <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                        <TextBlock x:Name="textCollapse" Text="&#xE010;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Opacity="0"/>
+                        <Ellipse x:Name="ellipseUserAvatar">
+                            <Ellipse.Fill>
+                                <ImageBrush Stretch="UniformToFill"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Button x:Name="buttonUserAvatar" Style="{DynamicResource FlatButtonStyle}" Click="buttonUserAvatar_Click">
+                            <Button.OpacityMask>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="Black" Offset="1"/>
+                                    <GradientStop Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.OpacityMask>
+                        </Button>
+                    </Grid>
+                    <Ellipse Grid.Column="1" x:Name="ellipseSelectedTab" Margin="2" Stroke="#FF66CCFF" StrokeThickness="3"/>
                 </Grid>
-                <WrapPanel>
-                    <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景"/>
-                    <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
-                </WrapPanel>
+                <Grid x:Name="gridTab">
+                    <StackPanel Tag="Tab:Setting" Opacity="0">
+                        <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
+                        <TextBlock Text="↑ 标签页栏预定&#xA;我，发现，选项" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        <Grid Margin="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Slider x:Name="sliderInterval" Style="{DynamicResource SliderStyle}" BorderBrush="#FFDFDFDF" Foreground="#FFFF7FBF" Background="#3F7F7F7F" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Maximum="{x:Static local:Const.NextIntervalsCount}" SmallChange="1" Margin="0,0,5,0" ValueChanged="sliderInterval_ValueChanged" LostMouseCapture="sliderInterval_LostMouseCapture"/>
+                            <TextBlock x:Name="textInterval" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="14"/>
+                        </Grid>
+                        <WrapPanel>
+                            <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景"/>
+                            <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
+                        </WrapPanel>
+                    </StackPanel>
+                    <StackPanel Tag="Tab:Me" Opacity="0">
+                        <TextBlock Text="就算我死了，被钉在棺材里，我也要用腐朽的声音喊出：打死白学家！ ——鲁迅" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
             <StackPanel Grid.Row="1">
                 <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>

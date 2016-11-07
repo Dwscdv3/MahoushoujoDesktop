@@ -115,7 +115,27 @@ namespace MahoushoujoDesktop
             }
         }
 
-        static Network net;
+        public static Network NetMahoushoujo;
+        static User _logInUser;
+        public static User LogInUser
+        {
+            get
+            {
+                return _logInUser;
+            }
+            set
+            {
+                _logInUser = value;
+            }
+        }
+        public static bool IsLoggedIn
+        {
+            get
+            {
+                return LogInUser != null;
+            }
+        }
+
         static DispatcherTimer timer = new DispatcherTimer ();
         static DateTime timerStartTime;
         static DispatcherTimer timerProgressBarNext = new DispatcherTimer ();
@@ -132,7 +152,7 @@ namespace MahoushoujoDesktop
         public static void Init ()
         {
             mainWindow = (MainWindow) App . Current . MainWindow;
-            net = new Network ()
+            NetMahoushoujo = new Network ()
             {
                 CustomHeaders = MahoushoujoCustomHeaders
             };
@@ -306,11 +326,11 @@ namespace MahoushoujoDesktop
                 string json;
                 if ( time <= 0 || time >= 2000000000 )
                 {
-                    json = await net . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
+                    json = await NetMahoushoujo . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
                 }
                 else
                 {
-                    json = await net . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
+                    json = await NetMahoushoujo . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
                 }
 
                 if ( !string . IsNullOrWhiteSpace ( json ) )
@@ -346,7 +366,7 @@ namespace MahoushoujoDesktop
         }
         public static async void Random ()
         {
-            string json = await net . GetString ( UrlApi + "rand&预设=宽屏" );
+            string json = await NetMahoushoujo . GetString ( UrlApi + "rand&预设=宽屏" );
             JavaScriptSerializer parser = new JavaScriptSerializer ();
             var obj = parser . DeserializeObject ( json );
             var info = parser . ConvertToType<JsonImageInfo> ( obj );
@@ -419,7 +439,7 @@ namespace MahoushoujoDesktop
             IsDownloading = true;
             try
             {
-                data = await net . GetBytes ( url , updateProgressBar );
+                data = await NetMahoushoujo . GetBytes ( url , updateProgressBar );
             }
             catch ( WebException ex )
             {
