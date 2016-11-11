@@ -126,6 +126,8 @@ namespace MahoushoujoDesktop
             set
             {
                 _logInUser = value;
+                Default . UserAccessToken = value?.Info?.sss;
+                mainWindow . SetUserPanel ();
             }
         }
         public static bool IsLoggedIn

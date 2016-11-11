@@ -5,7 +5,7 @@ using System . Windows;
 using MahoushoujoDesktop . Properties;
 using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Native . Managed;
-using static MahoushoujoDesktop . SystemUtil;
+using static MahoushoujoDesktop . Util . Process;
 using WM = MahoushoujoDesktop . Native . WindowMessage;
 
 namespace MahoushoujoDesktop

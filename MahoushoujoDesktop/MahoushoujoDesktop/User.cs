@@ -41,7 +41,6 @@ namespace MahoushoujoDesktop
                 var user = await GetUserInfoByToken ( token );
                 if ( user . Info . uid > 0 )
                 {
-                    Default . UserAccessToken = token;
                     return user;
                 }
             }

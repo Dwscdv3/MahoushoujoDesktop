@@ -8,41 +8,15 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:Metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     
         x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"
         TextOptions.TextHintingMode="Animated"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded" Background="{DynamicResource BlackLinearGradientBrush}" Activated="window_Activated" SizeChanged="window_SizeChanged" Topmost="True">
 
     <Window.Resources>
-        <Storyboard x:Key="StackPanelLoginExpandStoryboard">
-            <ThicknessAnimation
-                Storyboard.TargetName="stackPanelLogin"
-                Storyboard.TargetProperty="Margin"
-                To="10" Duration="0:0:0.25"/>
-            <DoubleAnimation
-                Storyboard.TargetName="textDefaultAvatar"
-                Storyboard.TargetProperty="Opacity"
-                To="0" Duration="0:0:0.25"/>
-            <DoubleAnimation
-                Storyboard.TargetName="textCollapse"
-                Storyboard.TargetProperty="Opacity"
-                To="1" Duration="0:0:0.25"/>
-        </Storyboard>
-        <Storyboard x:Key="StackPanelLoginCollapseStoryboard">
-            <ThicknessAnimation
-                Storyboard.TargetName="stackPanelLogin"
-                Storyboard.TargetProperty="Margin"
-                To="{x:Null}" Duration="0:0:0.25"/>
-            <DoubleAnimation
-                Storyboard.TargetName="textDefaultAvatar"
-                Storyboard.TargetProperty="Opacity"
-                To="1" Duration="0:0:0.25"/>
-            <DoubleAnimation
-                Storyboard.TargetName="textCollapse"
-                Storyboard.TargetProperty="Opacity"
-                To="0" Duration="0:0:0.25"/>
-        </Storyboard>
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
             <Setter Property="Background" Value="#00000000"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -318,42 +292,6 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel x:Name="stackPanelMain" Grid.RowSpan="2">
-                <StackPanel x:Name="stackPanelLogin" Margin="10,-120,10,10">
-                    <TextBox x:Name="textBoxUsername" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FFFF7FBF">
-                        <TextBox.Resources>
-                            <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
-                                <VisualBrush.Visual>
-                                    <TextBlock Text="@" Foreground="White"/>
-                                </VisualBrush.Visual>
-                            </VisualBrush>
-                        </TextBox.Resources>
-                    </TextBox>
-                    <PasswordBox x:Name="passwordBox" Style="{DynamicResource PasswordBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FF3FFF7F" PasswordChar="★" FontFamily="Segoe UI" local.UI:PasswordHelper.Attach="True" KeyDown="passwordBox_KeyDown">
-                        <PasswordBox.Resources>
-                            <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
-                                <VisualBrush.Visual>
-                                    <TextBlock Text="☆" Foreground="White"/>
-                                </VisualBrush.Visual>
-                            </VisualBrush>
-                        </PasswordBox.Resources>
-                    </PasswordBox>
-                    <Button x:Name="buttonLogin" Style="{DynamicResource FlatGradientButtonStyle}" Content="古ta妈黑暗之神！" Click="buttonLogin_Click">
-                        <Button.Background>
-                            <RadialGradientBrush>
-                                <GradientStop Color="#FFBF00FF"/>
-                                <GradientStop Offset="1" Color="#00BF00FF"/>
-                            </RadialGradientBrush>
-                        </Button.Background>
-                    </Button>
-                    <Button x:Name="buttonSignup" Style="{DynamicResource FlatGradientButtonStyle}" Content="← 去签订契约" Click="buttonSignup_Click">
-                        <Button.Background>
-                            <RadialGradientBrush>
-                                <GradientStop Color="#FFFF7FBF"/>
-                                <GradientStop Offset="1" Color="#00FF7FBF"/>
-                            </RadialGradientBrush>
-                        </Button.Background>
-                    </Button>
-                </StackPanel>
                 <Grid x:Name="gridTabHeader" Height="60" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -372,15 +310,17 @@
                         </Button>
                     </Grid>
                     <Grid Grid.Column="2" Margin="5">
-                        <Ellipse Fill="#3FFFFFFF"/>
-                        <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-                        <TextBlock x:Name="textCollapse" Text="&#xE010;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Opacity="0"/>
+                        <Grid>
+                            <Ellipse Fill="#3FFFFFFF"/>
+                            <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="13"/>
+                            <Metro:ProgressRing Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="#FF66CCFF" Padding="2"/>
+                        </Grid>
                         <Ellipse x:Name="ellipseUserAvatar">
                             <Ellipse.Fill>
                                 <ImageBrush Stretch="UniformToFill"/>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <Button x:Name="buttonUserAvatar" Style="{DynamicResource FlatButtonStyle}" Click="buttonUserAvatar_Click">
+                        <Button x:Name="buttonUserAvatar" Style="{DynamicResource FlatButtonStyle}" Click="tabHeader_Click">
                             <Button.OpacityMask>
                                 <RadialGradientBrush>
                                     <GradientStop Color="Black" Offset="1"/>
@@ -391,11 +331,11 @@
                     </Grid>
                     <Ellipse Grid.Column="1" x:Name="ellipseSelectedTab" Margin="2" Stroke="#FF66CCFF" StrokeThickness="3"/>
                 </Grid>
-                <Grid x:Name="gridTab">
-                    <StackPanel Tag="Tab:Setting" Opacity="0">
-                        <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="32" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
-                        <TextBlock Text="↑ 标签页栏预定&#xA;我，发现，选项" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                        <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <Grid x:Name="gridTab" Margin="0,0,10,0">
+                    <StackPanel Opacity="1">
+                        <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="31" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
+                        <TextBlock Text="↑ 标签页栏预定&#xA;我，发现，选项" HorizontalAlignment="Right"/>
+                        <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right"/>
                         <Grid Margin="10,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -409,8 +349,51 @@
                             <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
                         </WrapPanel>
                     </StackPanel>
-                    <StackPanel Tag="Tab:Me" Opacity="0">
-                        <TextBlock Text="就算我死了，被钉在棺材里，我也要用腐朽的声音喊出：打死白学家！ ——鲁迅" TextWrapping="Wrap"/>
+                    <StackPanel Opacity="0">
+                        <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">
+                            <TextBlock Text="就算我死了，被钉在棺材里，我也要用腐朽的声音喊出：打死白学家！ ——鲁迅" TextWrapping="Wrap"/>
+                            <WrapPanel HorizontalAlignment="Right">
+                                <TextBlock Text="欢迎回来，"/>
+                                <TextBlock x:Name="textBlockUserName" FontWeight="SemiBold"/>
+                            </WrapPanel>
+                            <Button x:Name="buttonLogOut" Content="ログアウト" Style="{DynamicResource FlatButtonStyle}" Click="buttonLogOut_Click"/>
+                        </StackPanel>
+                        <StackPanel x:Name="stackPanelLogin" Margin="10">
+                            <TextBox x:Name="textBoxUsername" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FFFF7FBF">
+                                <TextBox.Resources>
+                                    <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <TextBlock Text="@" Foreground="White"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </TextBox.Resources>
+                            </TextBox>
+                            <PasswordBox x:Name="passwordBox" Style="{DynamicResource PasswordBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FF3FFF7F" PasswordChar="★" FontFamily="Segoe UI" local.UI:PasswordHelper.Attach="True" KeyDown="passwordBox_KeyDown">
+                                <PasswordBox.Resources>
+                                    <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">
+                                        <VisualBrush.Visual>
+                                            <TextBlock Text="☆" Foreground="White"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </PasswordBox.Resources>
+                            </PasswordBox>
+                            <Button x:Name="buttonLogin" Style="{DynamicResource FlatGradientButtonStyle}" Content="古ta妈黑暗之神！" Click="buttonLogin_Click">
+                                <Button.Background>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="#FFBF00FF"/>
+                                        <GradientStop Offset="1" Color="#00BF00FF"/>
+                                    </RadialGradientBrush>
+                                </Button.Background>
+                            </Button>
+                            <Button x:Name="buttonSignup" Style="{DynamicResource FlatGradientButtonStyle}" Content="← 去签订契约" Click="buttonSignup_Click">
+                                <Button.Background>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="#FFFF7FBF"/>
+                                        <GradientStop Offset="1" Color="#00FF7FBF"/>
+                                    </RadialGradientBrush>
+                                </Button.Background>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </StackPanel>

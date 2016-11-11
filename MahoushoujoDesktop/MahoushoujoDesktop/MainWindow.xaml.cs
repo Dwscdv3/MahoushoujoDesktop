@@ -32,9 +32,7 @@ namespace MahoushoujoDesktop
         IKeyboardEvents keyboardEvent = Hook . GlobalEvents ();
         Storyboard slideOutStoryboard = null,
                    slideInStoryboard = null,
-                   progressCircleExitStoryboard = null,
-                   stackPanelLoginExpandStoryboard = null,
-                   stackPanelLoginCollapseStoryboard = null;
+                   progressCircleExitStoryboard = null;
 
         public MainWindow ()
         {
@@ -43,8 +41,6 @@ namespace MahoushoujoDesktop
 
             slideOutStoryboard = (Storyboard) Resources [ "SlideOutStoryboard" ];
             slideInStoryboard = (Storyboard) Resources [ "SlideInStoryboard" ];
-            stackPanelLoginExpandStoryboard = (Storyboard) Resources [ "StackPanelLoginExpandStoryboard" ];
-            stackPanelLoginCollapseStoryboard = (Storyboard) Resources [ "StackPanelLoginCollapseStoryboard" ];
             progressCircleExitStoryboard = (Storyboard) Resources [ "ProgressCircleExitStoryboard" ];
 
             keyboardEvent . KeyDown += KeyboardEvent_KeyDown;
@@ -91,11 +87,8 @@ namespace MahoushoujoDesktop
                 if ( user . Info . uid > 0 )
                 {
                     LogInUser = user;
-                    SetUserPanel ();
                 }
             }
-
-            // TODO: Load user token and sign in
         }
 
         private void window_Activated ( object sender , EventArgs e )
@@ -237,15 +230,25 @@ namespace MahoushoujoDesktop
             Close ();
         }
 
-        bool isLoggingIn = false;
+
+
+        public bool IsLoggingIn
+        {
+            get { return (bool) GetValue ( IsLoggingInProperty ); }
+            set { SetValue ( IsLoggingInProperty , value ); }
+        }
+        public static readonly DependencyProperty IsLoggingInProperty =
+            DependencyProperty . Register ( "IsLoggingIn" , typeof ( bool ) , typeof ( MainWindow ) , new PropertyMetadata ( false ) );
+
+
         private async void buttonLogin_Click ( object sender , RoutedEventArgs e )
         {
-            if ( !isLoggingIn )
+            if ( !IsLoggingIn )
             {
                 User user = null;
                 try
                 {
-                    isLoggingIn = true;
+                    IsLoggingIn = true;
                     user = await User . LogIn ( textBoxUsername . Text , passwordBox . Password );
                 }
                 catch ( Exception ex )
@@ -254,14 +257,12 @@ namespace MahoushoujoDesktop
                 }
                 finally
                 {
-                    isLoggingIn = false;
+                    IsLoggingIn = false;
                 }
 
                 if ( user != null )
                 {
                     LogInUser = user;
-                    SetUserPanel ();
-                    isUserLoginExpanded = false;
                 }
                 else
                 {
@@ -270,17 +271,31 @@ namespace MahoushoujoDesktop
             }
         }
 
-        private void SetUserPanel ()
+        public void SetUserPanel ()
         {
-            SetEllipseUserAvatar ();
-
+            if ( !string . IsNullOrEmpty ( LogInUser?.Info?.name ) )
+            {
+                SetEllipseUserAvatar ();
+                textBlockUserName . Text = LogInUser . Info . name;
+                stackPanelLogin . Visibility = Visibility . Collapsed;
+                stackPanelMe . Visibility = Visibility . Visible;
+            }
         }
 
         private void SetEllipseUserAvatar ()
         {
-            if ( !string . IsNullOrEmpty ( LogInUser . Info . avatar ) )
+            var avatarUrl = LogInUser?.Info?.avatar;
+            if ( !string . IsNullOrEmpty ( avatarUrl ) )
             {
-                ( (ImageBrush) ellipseUserAvatar . Fill ) . ImageSource = new BitmapImage ( new Uri ( LogInUser . Info . avatar ) );
+                if ( avatarUrl [ 0 ] == '/' )
+                {
+                    avatarUrl = avatarUrl . Insert ( 0 , "http:" );
+                }
+                ( (ImageBrush) ellipseUserAvatar . Fill ) . ImageSource = new BitmapImage ( new Uri ( avatarUrl ) );
+            }
+            else
+            {
+                ( (ImageBrush) ellipseUserAvatar . Fill ) . ImageSource = null;
             }
         }
 
@@ -302,45 +317,6 @@ namespace MahoushoujoDesktop
                 {
                     CurrentTab = index;
                     break;
-                }
-            }
-        }
-
-        bool _isUserLoginExpanded = false;
-        bool isUserLoginExpanded
-        {
-            get
-            {
-                return _isUserLoginExpanded;
-            }
-            set
-            {
-                _isUserLoginExpanded = value;
-                if ( value )
-                {
-                    stackPanelLoginExpandStoryboard . Begin ();
-                }
-                else
-                {
-                    stackPanelLoginCollapseStoryboard . Begin ();
-                }
-            }
-        }
-        private void buttonUserAvatar_Click ( object sender , RoutedEventArgs e )
-        {
-            if ( IsLoggedIn )
-            {
-                tabHeader_Click ( sender , e );
-            }
-            else
-            {
-                if ( isUserLoginExpanded )
-                {
-                    isUserLoginExpanded = false;
-                }
-                else
-                {
-                    isUserLoginExpanded = true;
                 }
             }
         }
@@ -525,6 +501,19 @@ namespace MahoushoujoDesktop
 
                 _currentTab = value;
             }
+        }
+
+        private void buttonLogOut_Click ( object sender , RoutedEventArgs e )
+        {
+            LogOut ();
+        }
+
+        private void LogOut ()
+        {
+            LogInUser = null;
+            SetEllipseUserAvatar ();
+            stackPanelMe . Visibility = Visibility . Collapsed;
+            stackPanelLogin . Visibility = Visibility . Visible;
         }
     }
 }
