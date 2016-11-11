@@ -12,6 +12,7 @@ using System . Windows . Documents;
 using System . Windows . Media;
 using System . Windows . Navigation;
 using System . Windows . Threading;
+using MahoushoujoDesktop . Util;
 using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Native . Managed;
 using static MahoushoujoDesktop . Properties . Settings;
@@ -304,14 +305,14 @@ namespace MahoushoujoDesktop
             var link = (Hyperlink) sender;
             var run = link . Inlines . FirstOrDefault () as Run;
             string text = run == null ? string . Empty : run . Text;
-            Process . Start ( "http://syouzyo.org/#/p/" + text );
+            System . Diagnostics . Process . Start ( "http://syouzyo.org/#/p/" + text );
         }
         private static void SourceLink_OnClick ( object sender , EventArgs e )
         {
             var link = (Hyperlink) sender;
             var run = link . Inlines . FirstOrDefault () as Run;
             string text = run == null ? string . Empty : run . Text;
-            Process . Start ( text );
+            System . Diagnostics . Process . Start ( text );
         }
 
         public static async void Next ()
@@ -337,9 +338,7 @@ namespace MahoushoujoDesktop
 
                 if ( !string . IsNullOrWhiteSpace ( json ) )
                 {
-                    JavaScriptSerializer parser = new JavaScriptSerializer ();
-                    var obj = parser . DeserializeObject ( json );
-                    info = parser . ConvertToType<List<JsonImageInfo>> ( obj ) [ 0 ];
+                    info = Json . ToObject<JsonImageInfo []> ( json ) [ 0 ];
                     time = info . created;
                     history . Add ( info );
                     pointInHistory = history . Count - 1;
@@ -369,9 +368,7 @@ namespace MahoushoujoDesktop
         public static async void Random ()
         {
             string json = await NetMahoushoujo . GetString ( UrlApi + "rand&预设=宽屏" );
-            JavaScriptSerializer parser = new JavaScriptSerializer ();
-            var obj = parser . DeserializeObject ( json );
-            var info = parser . ConvertToType<JsonImageInfo> ( obj );
+            var info = Json . ToObject<JsonImageInfo []> ( json ) [ 0 ];
             time = info . created;
             history . Add ( info );
             pointInHistory = history . Count - 1;

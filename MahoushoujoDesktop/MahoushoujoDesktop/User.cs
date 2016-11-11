@@ -9,6 +9,7 @@ using System . Text . RegularExpressions;
 using System . Threading . Tasks;
 using System . Web . Script . Serialization;
 using System . Windows . Media . Imaging;
+using MahoushoujoDesktop . Util;
 using static MahoushoujoDesktop . Properties . Settings;
 
 namespace MahoushoujoDesktop
@@ -99,8 +100,7 @@ namespace MahoushoujoDesktop
 
             var res = await req . GetResponseAsync ();
             var json = await new StreamReader ( res . GetResponseStream () , Encoding . UTF8 ) . ReadToEndAsync ();
-            var parser = new JavaScriptSerializer ();
-            var info = parser . Deserialize<JsonUserInfo> ( json );
+            var info = Json . ToObject<JsonUserInfo> ( json );
             res . Close ();
 
             return new User ( info );
@@ -112,8 +112,7 @@ namespace MahoushoujoDesktop
 
             var res = await req . GetResponseAsync ();
             string json = await new StreamReader ( res . GetResponseStream () , Encoding . UTF8 ) . ReadToEndAsync ();
-            var parser = new JavaScriptSerializer ();
-            var info = parser . Deserialize<JsonUserInfo> ( json );
+            var info = Json . ToObject<JsonUserInfo> ( json );
             res . Close ();
 
             return new User ( info );
