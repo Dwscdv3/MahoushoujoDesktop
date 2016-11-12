@@ -46,12 +46,40 @@ namespace Dwscdv3 . WPF . UserControls
         }
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty . Register ( "StrokeThickness" , typeof ( double ) , typeof ( CircularProgress ) ,
-                new PropertyMetadata ( 1.0 , new PropertyChangedCallback ( ValueChangedCallback ) ) );
-        
+                new PropertyMetadata (
+                    1.0 ,
+                    new PropertyChangedCallback ( ValueChangedCallback ) ,
+                    ( sender , e ) =>
+                    {
+                        var progress = (Control) sender;
+                        var oldValue = (double) e;
+                        if ( progress . IsLoaded )
+                        {
+                            var sideLength = progress . ActualWidth > progress . ActualHeight
+                                           ? progress . ActualHeight
+                                           : progress . ActualWidth;
+
+                            if ( oldValue > sideLength / 2 )
+                            {
+                                return sideLength / 2;
+                            }
+                        }
+                        if ( oldValue <= 0 )
+                        {
+                            return 1.0;
+                        }
+                        return e;
+                    }
+                ) );
 
         public CircularProgress ()
         {
             InitializeComponent ();
+        }
+
+        private void UserControl_Loaded ( object sender , RoutedEventArgs e )
+        {
+            Render ();
         }
 
         static void ValueChangedCallback ( DependencyObject sender , DependencyPropertyChangedEventArgs e )
@@ -60,43 +88,73 @@ namespace Dwscdv3 . WPF . UserControls
             progress . Render ();
         }
 
+        protected override void OnChildDesiredSizeChanged ( UIElement child )
+        {
+            base . OnChildDesiredSizeChanged ( child );
+        }
+
         public void Render ()
         {
-            MainGrid . Children . Clear ();
-            
-            Path p = new Path ();
-            p . StrokeThickness = StrokeThickness;
-            p . Stroke = Foreground;
-            p . Width = Width;
-            p . Height = Height;
+            if ( IsLoaded )
+            {
+                MainGrid . Children . Clear ();
 
-            PathGeometry g = new PathGeometry ();
-            PathFigureCollection fc = new PathFigureCollection ();
-            PathFigure f = new PathFigure ();
-            f . StartPoint = new Point ( Width / 2 , StrokeThickness / 2 );
-            PathSegmentCollection sc = new PathSegmentCollection ();
+                var sideLength = ActualWidth > ActualHeight ? ActualHeight : ActualWidth;
 
-            double angle = ( Value - Minimum ) / ( Maximum - Minimum ) * 360;
-            ArcSegment s = new ArcSegment ();
-            s . Size = new Size ( Width / 2 - StrokeThickness / 2 , Height / 2 - StrokeThickness / 2 );
-            s . SweepDirection = SweepDirection . Clockwise;
-            s . IsLargeArc = angle >= 180 ? true : false;
-            s . Point = GetPointOnCircle ( new Point ( Width / 2 , Height / 2 ) , s . Size . Width , angle );
-            sc . Add ( s );
-            f . Segments = sc;
-            fc . Add ( f );
-            g . Figures = fc;
-            p . Data = g;
+                Path p = new Path ();
+                p . StrokeThickness = StrokeThickness;
+                p . Stroke = Foreground;
+                p . Width = p . Height = sideLength;
 
-            MainGrid . Children . Add ( p );
+                PathGeometry g = new PathGeometry ();
+                PathFigureCollection fc = new PathFigureCollection ();
+                PathFigure f = new PathFigure ();
+                f . StartPoint = new Point ( sideLength / 2 , StrokeThickness / 2 );
+                PathSegmentCollection sc = new PathSegmentCollection ();
+
+                double angle = ( Value - Minimum ) / ( Maximum - Minimum ) * 360;
+                ArcSegment s = new ArcSegment ();
+                s . Size = new Size ( sideLength / 2 - StrokeThickness / 2 , sideLength / 2 - StrokeThickness / 2 );
+                s . SweepDirection = SweepDirection . Clockwise;
+                if ( angle >= 360 )
+                {
+                    s . IsLargeArc = true;
+                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 359.99 );
+                }
+                else if ( angle > 0 )
+                {
+                    s . IsLargeArc = angle >= 180 ? true : false;
+                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , angle );
+                }
+                else
+                {
+                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 0 );
+                }
+                sc . Add ( s );
+                f . Segments = sc;
+                fc . Add ( f );
+                g . Figures = fc;
+                p . Data = g;
+
+                MainGrid . Children . Add ( p );
+            }
         }
-        
+
         Point GetPointOnCircle ( Point center , double r , double angle )
         {
             Point p = new Point ();
             p . X = center . X + Math . Sin ( angle * Math . PI / 180 ) * r;
             p . Y = center . Y - Math . Cos ( angle * Math . PI / 180 ) * r;
             return p;
+        }
+
+        protected override void OnPropertyChanged ( DependencyPropertyChangedEventArgs e )
+        {
+            base . OnPropertyChanged ( e );
+            if ( IsLoaded )
+            {
+                Render ();
+            }
         }
     }
 }

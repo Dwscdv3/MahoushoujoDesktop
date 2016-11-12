@@ -89,8 +89,11 @@
     <Compile Include="Native\Managed.cs" />
     <Compile Include="Native\User32.cs" />
     <Compile Include="Network.cs" />
+    <Compile Include="UI\HoldButton.xaml.cs">
+      <DependentUpon>HoldButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\Json.cs" />
-    <Compile Include="Util\System.cs" />
+    <Compile Include="Util\Process.cs" />
     <Compile Include="UI\PasswordHelper.cs" />
     <Compile Include="UI\ButtonTag.xaml.cs">
       <DependentUpon>ButtonTag.xaml</DependentUpon>
@@ -121,6 +124,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\ButtonTag.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\HoldButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
