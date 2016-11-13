@@ -7,8 +7,8 @@
         xmlns:local.UI="clr-namespace:MahoushoujoDesktop.UI"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:Metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    
+        xmlns:Binding="clr-namespace:MahoushoujoDesktop.Binding"
     
         x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"
@@ -17,7 +17,9 @@
         Title="Mahoushoujo Desktop" Width="{x:Static local:Const.MainWindowWidth}" AllowsTransparency="True" WindowStyle="None" Foreground="White" ShowInTaskbar="False" ResizeMode="NoResize" FontSize="16" d:DesignHeight="720" Loaded="window_Loaded" Background="{DynamicResource BlackLinearGradientBrush}" Activated="window_Activated" SizeChanged="window_SizeChanged" Topmost="True">
 
     <Window.Resources>
-        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+        <Binding:BooleanNotConverter x:Key="BooleanNotConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Background" Value="#00000000"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#7FFFFFFF"/>
@@ -33,7 +35,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
+        <Style x:Key="PasswordBoxStyle" TargetType="{x:Type PasswordBox}">
             <Setter Property="Background" Value="#00000000"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#7FFFFFFF"/>
@@ -313,7 +315,7 @@
                         <Grid>
                             <Ellipse Fill="#3FFFFFFF"/>
                             <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="13"/>
-                            <Metro:ProgressRing Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="#FF66CCFF" Padding="2"/>
+                            <local.UI:WaitRing x:Name="waitRingLogin" Foreground="#FF66CCFF" Margin="2" Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"/>
                         </Grid>
                         <Ellipse x:Name="ellipseUserAvatar">
                             <Ellipse.Fill>
@@ -348,6 +350,7 @@
                             <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景"/>
                             <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
                         </WrapPanel>
+                        <local.UI:WaitRing Foreground="Red" Height="100" BorderBrush="#FFFF78CE"/>
                     </StackPanel>
                     <StackPanel Opacity="0">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">
@@ -358,7 +361,7 @@
                             </WrapPanel>
                             <Button x:Name="buttonLogOut" Content="ログアウト" Style="{DynamicResource FlatButtonStyle}" Click="buttonLogOut_Click"/>
                         </StackPanel>
-                        <StackPanel x:Name="stackPanelLogin" Margin="10">
+                        <StackPanel x:Name="stackPanelLogin" Margin="10" IsEnabled="{Binding IsLoggingIn, Converter={StaticResource BooleanNotConverter}, ElementName=window}">
                             <TextBox x:Name="textBoxUsername" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,5" CaretBrush="White" SelectionBrush="#FFFF7FBF">
                                 <TextBox.Resources>
                                     <VisualBrush x:Key="Hint" TileMode="None" Opacity="0.5" Stretch="None">

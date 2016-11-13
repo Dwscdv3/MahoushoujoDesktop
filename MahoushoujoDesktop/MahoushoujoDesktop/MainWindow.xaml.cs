@@ -263,6 +263,7 @@ namespace MahoushoujoDesktop
                 if ( user != null )
                 {
                     LogInUser = user;
+                    passwordBox . Password = "";
                 }
                 else
                 {

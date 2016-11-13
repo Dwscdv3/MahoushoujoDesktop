@@ -1,0 +1,63 @@
+﻿<UserControl x:Name="userControl" x:Class="MahoushoujoDesktop.UI.WaitRing"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MahoushoujoDesktop.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Foreground="White">
+    <Grid Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}" MaxHeight="{Binding ActualHeight, ElementName=userControl, Mode=OneWay}">
+        <Ellipse Stroke="{Binding Foreground, ElementName=userControl}" StrokeThickness="2"
+                 RenderTransformOrigin="0.5,0.5" Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <DoubleAnimation Storyboard.TargetName="rotate"
+                                             Storyboard.TargetProperty="Angle"
+                                             From="0" To="360" Duration="0:0:1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+            <Ellipse.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform x:Name="rotate"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Ellipse.RenderTransform>
+            <Ellipse.OpacityMask>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Transparent" Offset="0.6"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Ellipse.OpacityMask>
+        </Ellipse>
+        <!--<Path x:Name="path" Stroke="{Binding Foreground, ElementName=userControl}" RenderTransformOrigin="0.5,0.5" StrokeThickness="3">
+            <Path.OpacityMask>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#00000000" Offset="0"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                    <GradientStop Color="White" Offset="0.5"/>
+                </LinearGradientBrush>
+            </Path.OpacityMask>
+            <Path.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform x:Name="rotate"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Path.RenderTransform>
+            <Path.Data>
+                <PathGeometry>
+                    <PathFigure x:Name="figure" StartPoint="150,300">
+                        <ArcSegment x:Name="arcSegment" Point="150,0" Size="1,1"/>
+                    </PathFigure>
+                </PathGeometry>
+            </Path.Data>
+        </Path>-->
+    </Grid>
+</UserControl>
