@@ -12,6 +12,7 @@ using System . Windows . Media;
 using System . Windows . Media . Imaging;
 using System . Windows . Navigation;
 using System . Windows . Shapes;
+using static MahoushoujoDesktop . Util . ColorUtil;
 
 namespace MahoushoujoDesktop . UI
 {
@@ -47,7 +48,7 @@ namespace MahoushoujoDesktop . UI
         private void ToggleButton_MouseEnter ( object sender , MouseEventArgs e )
         {
             Background = IsChecked == true
-                ? new LinearGradientBrush ( ColorCheckedT , ColorBlend ( ColorChecked , BlendColorMouseOver ) , 0 )
+                ? new LinearGradientBrush ( ColorCheckedT , Blend ( ColorChecked , BlendColorMouseOver ) , 0 )
                 : BrushQuarterWhite;
         }
 
@@ -59,25 +60,16 @@ namespace MahoushoujoDesktop . UI
         private void ToggleButton_MouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
             Background = IsChecked == true
-                ? new LinearGradientBrush ( ColorCheckedT , ColorBlend ( ColorChecked , BlendColorMouseDown ) , 0 )
+                ? new LinearGradientBrush ( ColorCheckedT , Blend ( ColorChecked , BlendColorMouseDown ) , 0 )
                 : BrushHalfWhite;
         }
 
         private void ToggleButton_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
         {
             Background = IsChecked == !IsPressed
-                ? new LinearGradientBrush ( ColorCheckedT , ColorBlend ( ColorChecked , BlendColorMouseOver ) , 0 )
+                ? new LinearGradientBrush ( ColorCheckedT , Blend ( ColorChecked , BlendColorMouseOver ) , 0 )
                 : BrushQuarterWhite;
         }
 
-        public static Color ColorBlend ( Color c1 , Color c2 )
-        {
-            Color c = new Color ();
-            c . R = (byte) Math . Sqrt ( c2 . R * c2 . A + ( byte . MaxValue - c2 . A ) * c1 . R );
-            c . G = (byte) Math . Sqrt ( c2 . G * c2 . A + ( byte . MaxValue - c2 . A ) * c1 . G );
-            c . B = (byte) Math . Sqrt ( c2 . B * c2 . A + ( byte . MaxValue - c2 . A ) * c1 . B );
-            c . A = (byte) ( c1 . A + Math . Sqrt ( ( byte . MaxValue - c1 . A ) * c2 . A ) );
-            return c;
-        }
     }
 }

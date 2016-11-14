@@ -9,9 +9,11 @@ using System . Windows . Data;
 using System . Windows . Documents;
 using System . Windows . Input;
 using System . Windows . Media;
+using System . Windows . Media . Animation;
 using System . Windows . Media . Imaging;
 using System . Windows . Navigation;
 using System . Windows . Shapes;
+using Dwscdv3 . WPF . UserControls;
 
 namespace MahoushoujoDesktop . UI
 {
@@ -20,17 +22,86 @@ namespace MahoushoujoDesktop . UI
     /// </summary>
     public partial class HoldButton : Button
     {
+        public event RoutedEventHandler SecondaryOperation;
+
         public Brush ProgressBrush
         {
             get { return (Brush) GetValue ( ProgressBrushProperty ); }
             set { SetValue ( ProgressBrushProperty , value ); }
         }
         public static readonly DependencyProperty ProgressBrushProperty =
-            DependencyProperty . Register ( "ProgressBrush" , typeof ( Brush ) , typeof ( HoldButton ) , new PropertyMetadata ( Brushes.White ) );
-        
+            DependencyProperty . Register ( "ProgressBrush" , typeof ( Brush ) , typeof ( HoldButton ) , new PropertyMetadata ( Brushes . White ) );
+
+        public MouseOperation MouseSecondaryOperation
+        {
+            get { return (MouseOperation) GetValue ( MouseSecondaryOperationProperty ); }
+            set { SetValue ( MouseSecondaryOperationProperty , value ); }
+        }
+        public static readonly DependencyProperty MouseSecondaryOperationProperty =
+            DependencyProperty . Register (
+                "MouseSecondaryOperation" , typeof ( MouseOperation ) , typeof ( HoldButton ) ,
+                new PropertyMetadata ( MouseOperation . RightButtonClick ) );
+
+        private CircularProgress progress;
+        private Storyboard progressStoryboard = null;
+
         public HoldButton ()
         {
             InitializeComponent ();
+            progressStoryboard = Resources [ "ProgressStoryboard" ] as Storyboard;
+        }
+
+        private void userControlHoldButton_MouseRightButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            if ( MouseSecondaryOperation == MouseOperation . RightButtonHold )
+            {
+                e . MouseDevice . Capture ( this );
+                progressStoryboard . Begin ();
+            }
+            else
+            {
+                SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
+            }
+        }
+
+        private void userControlHoldButton_TouchDown ( object sender , TouchEventArgs e )
+        {
+            e . TouchDevice . Capture ( this );
+            progressStoryboard . Begin ();
+        }
+
+        private void progressStoryboard_Completed ( object sender , EventArgs e )
+        {
+            SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
+            progressStoryboard . Stop ();
+        }
+
+        private void userControlHoldButton_LostMouseCapture ( object sender , MouseEventArgs e )
+        {
+            progressStoryboard . Stop ();
+        }
+
+        private void userControlHoldButton_LostTouchCapture ( object sender , TouchEventArgs e )
+        {
+            progressStoryboard . Stop ();
+        }
+
+        private void userControlHoldButton_MouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+        {
+            ReleaseMouseCapture ();
+        }
+
+        private void userControlHoldButton_TouchUp ( object sender , TouchEventArgs e )
+        {
+            ReleaseTouchCapture ( e . TouchDevice );
+        }
+
+        public override void OnApplyTemplate ()
+        {
+            progress = GetTemplateChild ( "progress" ) as CircularProgress;
+            Storyboard . SetTarget ( progressStoryboard . Children [ 0 ] , progress );
+
+            base . OnApplyTemplate ();
         }
 
         /* TODO
@@ -43,5 +114,10 @@ namespace MahoushoujoDesktop . UI
          *       Mouse.Capture
          *     LostMouseCapture
          */
+    }
+    public enum MouseOperation
+    {
+        RightButtonClick,
+        RightButtonHold
     }
 }

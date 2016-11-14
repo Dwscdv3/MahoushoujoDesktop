@@ -84,8 +84,9 @@
     <Compile Include="UI\WaitRing.xaml.cs">
       <DependentUpon>WaitRing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Util\Color.cs" />
     <Compile Include="Util\Json.cs" />
-    <Compile Include="Util\Process.cs" />
+    <Compile Include="Util\ProcessUtil.cs" />
     <Compile Include="UI\PasswordHelper.cs" />
     <Compile Include="UI\ButtonTag.xaml.cs">
       <DependentUpon>ButtonTag.xaml</DependentUpon>

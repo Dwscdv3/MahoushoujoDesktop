@@ -2,7 +2,7 @@
 
 namespace MahoushoujoDesktop . Util
 {
-    public static class Process
+    public static class ProcessUtil
     {
         public static bool IsAnotherInstanceExist ()
         {

@@ -351,6 +351,9 @@
                             <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
                         </WrapPanel>
                         <local.UI:WaitRing Foreground="Red" Height="100" BorderBrush="#FFFF78CE"/>
+                        <local.UI:HoldButton x:Name="holdButton" Content="HoldButton"
+                                             Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                                             SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" />
                     </StackPanel>
                     <StackPanel Opacity="0">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">

@@ -15,6 +15,7 @@ using System . Windows . Media . Animation;
 using System . Windows . Media . Imaging;
 using Gma . System . MouseKeyHook;
 using MahoushoujoDesktop . Native;
+using MahoushoujoDesktop . Util;
 using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Mahoushoujo;
 using static MahoushoujoDesktop . Native . Managed;
@@ -502,6 +503,11 @@ namespace MahoushoujoDesktop
 
                 _currentTab = value;
             }
+        }
+
+        private void holdButton_SecondaryOperation ( object sender , RoutedEventArgs e )
+        {
+            holdButton . Foreground = new SolidColorBrush ( ColorUtil . Random () );
         }
 
         private void buttonLogOut_Click ( object sender , RoutedEventArgs e )
