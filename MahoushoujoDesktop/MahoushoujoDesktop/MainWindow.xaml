@@ -353,7 +353,7 @@
                         <local.UI:WaitRing Foreground="Red" Height="100" FrameRate="30"/>
                         <local.UI:HoldButton x:Name="holdButton" Content="HoldButton"
                                              Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                             SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" Click="holdButton_Click" />
+                                             SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" Click="holdButton_Click" BorderThickness="40,0,0,0" />
                     </StackPanel>
                     <StackPanel Opacity="0">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">
