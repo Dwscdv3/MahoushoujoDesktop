@@ -127,6 +127,7 @@ namespace MahoushoujoDesktop
                 {
                     setWindowPosition ();
                 } );
+                // FIXIT: Forms.Screen 的参数在分辨率更改后没有更新，需要另找获取 WorkingArea 的方法
                 break;
             case WM . Custom_ShowWindow:
                 if ( !IsVisible )
@@ -230,9 +231,7 @@ namespace MahoushoujoDesktop
         {
             Close ();
         }
-
-
-
+        
         public bool IsLoggingIn
         {
             get { return (bool) GetValue ( IsLoggingInProperty ); }
@@ -240,8 +239,7 @@ namespace MahoushoujoDesktop
         }
         public static readonly DependencyProperty IsLoggingInProperty =
             DependencyProperty . Register ( "IsLoggingIn" , typeof ( bool ) , typeof ( MainWindow ) , new PropertyMetadata ( false ) );
-
-
+        
         private async void buttonLogin_Click ( object sender , RoutedEventArgs e )
         {
             if ( !IsLoggingIn )
@@ -508,6 +506,11 @@ namespace MahoushoujoDesktop
         private void holdButton_SecondaryOperation ( object sender , RoutedEventArgs e )
         {
             holdButton . Foreground = new SolidColorBrush ( ColorUtil . Random () );
+        }
+
+        private void holdButton_Click ( object sender , RoutedEventArgs e )
+        {
+            MessageBox . Show ( "" );
         }
 
         private void buttonLogOut_Click ( object sender , RoutedEventArgs e )

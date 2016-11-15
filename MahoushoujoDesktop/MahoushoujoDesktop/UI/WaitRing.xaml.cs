@@ -21,6 +21,15 @@ namespace MahoushoujoDesktop . UI
     /// </summary>
     public partial class WaitRing : UserControl
     {
+        public int FrameRate
+        {
+            get { return (int) GetValue ( FrameRateProperty ); }
+            set { SetValue ( FrameRateProperty , value ); }
+        }
+        public static readonly DependencyProperty FrameRateProperty =
+            DependencyProperty . Register ( "FrameRate" , typeof ( int ) , typeof ( WaitRing ) ,
+                new PropertyMetadata ( 60 ) );
+
         public WaitRing ()
         {
             InitializeComponent ();

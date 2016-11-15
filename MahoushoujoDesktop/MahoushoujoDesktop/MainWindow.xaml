@@ -315,7 +315,7 @@
                         <Grid>
                             <Ellipse Fill="#3FFFFFFF"/>
                             <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="13"/>
-                            <local.UI:WaitRing x:Name="waitRingLogin" Foreground="#FF66CCFF" Margin="2" Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"/>
+                            <local.UI:WaitRing x:Name="waitRingLogin" Foreground="#FF66CCFF" Margin="2" Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}" FrameRate="20"/>
                         </Grid>
                         <Ellipse x:Name="ellipseUserAvatar">
                             <Ellipse.Fill>
@@ -350,10 +350,10 @@
                             <local.UI:Tag HorizontalAlignment="Left" Margin="5" Text="风景"/>
                             <local.UI:ButtonTag HorizontalAlignment="Left" Text="※※Play" Margin="5"/>
                         </WrapPanel>
-                        <local.UI:WaitRing Foreground="Red" Height="100" BorderBrush="#FFFF78CE"/>
+                        <local.UI:WaitRing Foreground="Red" Height="100" FrameRate="30"/>
                         <local.UI:HoldButton x:Name="holdButton" Content="HoldButton"
                                              Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
-                                             SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" />
+                                             SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" Click="holdButton_Click" />
                     </StackPanel>
                     <StackPanel Opacity="0">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">

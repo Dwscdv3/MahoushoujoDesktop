@@ -51,6 +51,16 @@ namespace MahoushoujoDesktop . UI
             progressStoryboard = Resources [ "ProgressStoryboard" ] as Storyboard;
         }
 
+        private void progressStoryboard_Completed ( object sender , EventArgs e )
+        {
+            SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
+            progressStoryboard . Stop ();
+        }
+        
+        private void userControlHoldButton_MouseDown ( object sender , MouseButtonEventArgs e )
+        {
+            isTouchLastTime = false;
+        }
         private void userControlHoldButton_MouseRightButtonDown ( object sender , MouseButtonEventArgs e )
         {
             if ( MouseSecondaryOperation == MouseOperation . RightButtonHold )
@@ -63,37 +73,45 @@ namespace MahoushoujoDesktop . UI
                 SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
             }
         }
-
-        private void userControlHoldButton_TouchDown ( object sender , TouchEventArgs e )
+        private void userControlHoldButton_MouseRightButtonUp ( object sender , MouseButtonEventArgs e )
         {
-            e . TouchDevice . Capture ( this );
-            progressStoryboard . Begin ();
+            ReleaseMouseCapture ();
         }
-
-        private void progressStoryboard_Completed ( object sender , EventArgs e )
-        {
-            SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
-            progressStoryboard . Stop ();
-        }
-
         private void userControlHoldButton_LostMouseCapture ( object sender , MouseEventArgs e )
         {
             progressStoryboard . Stop ();
         }
 
+        bool isTouchLastTime = false;
+        DateTime touchDownTime = DateTime . MinValue;
+        private void userControlHoldButton_TouchDown ( object sender , TouchEventArgs e )
+        {
+            isTouchLastTime = true;
+            touchDownTime = DateTime . Now;
+            e . TouchDevice . Capture ( this );
+            progressStoryboard . Begin ();
+        }
+        private void userControlHoldButton_TouchUp ( object sender , TouchEventArgs e )
+        {
+            ReleaseTouchCapture ( e . TouchDevice );
+        }
         private void userControlHoldButton_LostTouchCapture ( object sender , TouchEventArgs e )
         {
             progressStoryboard . Stop ();
         }
-
-        private void userControlHoldButton_MouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+        protected override void OnClick ()
         {
-            ReleaseMouseCapture ();
-        }
-
-        private void userControlHoldButton_TouchUp ( object sender , TouchEventArgs e )
-        {
-            ReleaseTouchCapture ( e . TouchDevice );
+            if ( isTouchLastTime )
+            {
+                if ( DateTime . Now - touchDownTime < TimeSpan . FromMilliseconds ( 200 ) )
+                {
+                    base . OnClick ();
+                }
+            }
+            else
+            {
+                base . OnClick ();
+            }
         }
 
         public override void OnApplyTemplate ()

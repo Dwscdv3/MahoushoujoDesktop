@@ -5,7 +5,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:MahoushoujoDesktop.UI"
         mc:Ignorable="d" 
-        d:DesignHeight="200" d:DesignWidth="300" MouseRightButtonDown="userControlHoldButton_MouseRightButtonDown" TouchDown="userControlHoldButton_TouchDown" LostMouseCapture="userControlHoldButton_LostMouseCapture" LostTouchCapture="userControlHoldButton_LostTouchCapture" MouseRightButtonUp="userControlHoldButton_MouseRightButtonUp" TouchUp="userControlHoldButton_TouchUp">
+        d:DesignHeight="200" d:DesignWidth="300"
+        
+        MouseRightButtonDown="userControlHoldButton_MouseRightButtonDown"
+        MouseRightButtonUp="userControlHoldButton_MouseRightButtonUp"
+        LostMouseCapture="userControlHoldButton_LostMouseCapture"
+        
+        TouchDown="userControlHoldButton_TouchDown"
+        TouchUp="userControlHoldButton_TouchUp"
+        LostTouchCapture="userControlHoldButton_LostTouchCapture"
+        Stylus.IsPressAndHoldEnabled="False"
+        
+        BorderBrush="White" MouseDown="userControlHoldButton_MouseDown">
     <Button.Resources>
         <Storyboard x:Key="ProgressStoryboard">
             <DoubleAnimation Storyboard.TargetProperty="Value"
@@ -27,7 +38,7 @@
             </ControlTemplate.Resources>
             <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
                 <Grid>
-                    <UserControls:CircularProgress x:Name="progress"/>
+                    <UserControls:CircularProgress x:Name="progress" Foreground="{TemplateBinding BorderBrush}"/>
                     <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                 </Grid>
             </Border>
