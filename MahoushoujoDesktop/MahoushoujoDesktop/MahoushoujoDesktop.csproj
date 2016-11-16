@@ -69,6 +69,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Binding\HalfConverter.cs" />
     <Compile Include="Binding\BooleanNotConverter.cs" />
     <Compile Include="Binding\ThicknessToDoubleConverter.cs" />
     <Compile Include="UI\CircularProgress.xaml.cs">

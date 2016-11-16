@@ -19,6 +19,14 @@
     <Window.Resources>
         <Binding:BooleanNotConverter x:Key="BooleanNotConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <Style x:Key="CollapseOpacity0Style" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="Opacity" Value="0">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Background" Value="#00000000"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -334,7 +342,9 @@
                     <Ellipse Grid.Column="1" x:Name="ellipseSelectedTab" Margin="2" Stroke="#FF66CCFF" StrokeThickness="3"/>
                 </Grid>
                 <Grid x:Name="gridTab" Margin="0,0,10,0">
-                    <StackPanel Opacity="1">
+                    <Grid.Resources>
+                    </Grid.Resources>
+                    <StackPanel Opacity="1" Style="{StaticResource CollapseOpacity0Style}">
                         <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="31" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
                         <TextBlock Text="↑ 标签页栏预定&#xA;我，发现，选项" HorizontalAlignment="Right"/>
                         <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right"/>
@@ -355,7 +365,7 @@
                                              Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                              SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" Click="holdButton_Click" BorderThickness="40,0,0,0" />
                     </StackPanel>
-                    <StackPanel Opacity="0">
+                    <StackPanel Opacity="0" Style="{StaticResource CollapseOpacity0Style}">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">
                             <TextBlock Text="就算我死了，被钉在棺材里，我也要用腐朽的声音喊出：打死白学家！ ——鲁迅" TextWrapping="Wrap"/>
                             <WrapPanel HorizontalAlignment="Right">
@@ -431,10 +441,27 @@
                     </DockPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <Button x:Name="buttonPrev"
-                            Style="{DynamicResource FlatIconButtonStyle}"
-                            Content="&#xE76B;" FontFamily="Segoe MDL2 Assets"
-                            Click="buttonPrev_Click" IsEnabled="False"/>
+                    <local.UI:HoldButton x:Name="buttonPrev"
+                                         FontFamily="Segoe MDL2 Assets"
+                                         ToolTip="想立刻回到最新的一张吗？试试鼠标右键或触摸按住！"
+                                         Click="buttonPrev_Click" SecondaryOperation="buttonPrev_SecondaryOperation" MouseSecondaryOperation="RightButtonHold"
+                                         BorderThickness="2" BorderBrush="#FF66CCFF">
+                        <local.UI:HoldButton.Style>
+                            <Style TargetType="{x:Type local.UI:HoldButton}">
+                                <Setter Property="Content" Value="&#xE76B;"/>
+                                <Setter Property="FontSize" Value="32px"/>
+                                <Setter Property="Width" Value="50"/>
+                                <Setter Property="Height" Value="50"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsProgressing" Value="True">
+                                        <Setter Property="Content" Value="&#xE892;"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </local.UI:HoldButton.Style>
+                    </local.UI:HoldButton>
                     <ToggleButton x:Name="buttonMainSwitch"
                                   Style="{DynamicResource FlatIconButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
                                   Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"

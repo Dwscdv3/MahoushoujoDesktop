@@ -36,14 +36,7 @@ namespace MahoushoujoDesktop
             set
             {
                 _isDownloading = value;
-                if ( CanGoPrevious )
-                {
-                    mainWindow . buttonPrev . IsEnabled = !value;
-                }
-                else
-                {
-                    mainWindow . buttonPrev . IsEnabled = false;
-                }
+                mainWindow . buttonPrev . IsEnabled = !value;
                 mainWindow . buttonNext . IsEnabled = !value;
             }
         }
@@ -70,7 +63,14 @@ namespace MahoushoujoDesktop
         {
             get
             {
-                return pointInHistory > 0;
+                if ( IsRandom )
+                {
+                    return true;
+                }
+                else
+                {
+                    return pointInHistory > 0;
+                }
             }
         }
         static Source _source = Source . Index;
@@ -363,6 +363,10 @@ namespace MahoushoujoDesktop
             {
                 var info = history [ --pointInHistory ];
                 SetInfo ( info );
+            }
+            else
+            {
+                Reset ();
             }
         }
         public static async void Random ()

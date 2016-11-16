@@ -42,6 +42,15 @@ namespace MahoushoujoDesktop . UI
                 "MouseSecondaryOperation" , typeof ( MouseOperation ) , typeof ( HoldButton ) ,
                 new PropertyMetadata ( MouseOperation . RightButtonClick ) );
 
+        public bool IsProgressing
+        {
+            get { return (bool) GetValue ( IsProgressingProperty ); }
+            set { SetValue ( IsProgressingProperty , value ); }
+        }
+        public static readonly DependencyProperty IsProgressingProperty =
+            DependencyProperty . Register ( "IsProgressing" , typeof ( bool ) , typeof ( HoldButton ) ,
+                new PropertyMetadata ( false ) );
+        
         private CircularProgress progress;
         private Storyboard progressStoryboard = null;
 
@@ -51,12 +60,24 @@ namespace MahoushoujoDesktop . UI
             progressStoryboard = Resources [ "ProgressStoryboard" ] as Storyboard;
         }
 
+        private void startProgressing ()
+        {
+            progressStoryboard . Begin ();
+            IsProgressing = true;
+        }
+        private void stopProgressing ()
+        {
+            progressStoryboard . Stop ();
+            IsProgressing = false;
+        }
+
         private void progressStoryboard_Completed ( object sender , EventArgs e )
         {
+            IsProgressing = false;
             SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
             progressStoryboard . Stop ();
         }
-        
+
         private void userControlHoldButton_MouseDown ( object sender , MouseButtonEventArgs e )
         {
             isTouchLastTime = false;
@@ -66,20 +87,21 @@ namespace MahoushoujoDesktop . UI
             if ( MouseSecondaryOperation == MouseOperation . RightButtonHold )
             {
                 e . MouseDevice . Capture ( this );
-                progressStoryboard . Begin ();
+                startProgressing ();
             }
             else
             {
                 SecondaryOperation?.Invoke ( this , new RoutedEventArgs () );
             }
         }
+
         private void userControlHoldButton_MouseRightButtonUp ( object sender , MouseButtonEventArgs e )
         {
             ReleaseMouseCapture ();
         }
         private void userControlHoldButton_LostMouseCapture ( object sender , MouseEventArgs e )
         {
-            progressStoryboard . Stop ();
+            stopProgressing ();
         }
 
         bool isTouchLastTime = false;
@@ -89,7 +111,7 @@ namespace MahoushoujoDesktop . UI
             isTouchLastTime = true;
             touchDownTime = DateTime . Now;
             e . TouchDevice . Capture ( this );
-            progressStoryboard . Begin ();
+            startProgressing ();
         }
         private void userControlHoldButton_TouchUp ( object sender , TouchEventArgs e )
         {
@@ -97,7 +119,7 @@ namespace MahoushoujoDesktop . UI
         }
         private void userControlHoldButton_LostTouchCapture ( object sender , TouchEventArgs e )
         {
-            progressStoryboard . Stop ();
+            stopProgressing ();
         }
         protected override void OnClick ()
         {

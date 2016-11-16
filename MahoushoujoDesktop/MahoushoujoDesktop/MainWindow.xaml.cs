@@ -270,7 +270,7 @@ namespace MahoushoujoDesktop
                 }
             }
         }
-
+        
         public void SetUserPanel ()
         {
             if ( !string . IsNullOrEmpty ( LogInUser?.Info?.name ) )
@@ -524,6 +524,11 @@ namespace MahoushoujoDesktop
             SetEllipseUserAvatar ();
             stackPanelMe . Visibility = Visibility . Collapsed;
             stackPanelLogin . Visibility = Visibility . Visible;
+        }
+
+        private void buttonPrev_SecondaryOperation ( object sender , RoutedEventArgs e )
+        {
+            Reset ();
         }
     }
 }
