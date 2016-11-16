@@ -12,17 +12,22 @@ namespace MahoushoujoDesktop
 {
     public class Network
     {
-        public Dictionary<string , string> CustomHeaders = new Dictionary<string , string> ();
-
-        WebClient webClient = new WebClient ();
-        public event DownloadProgressChangedEventHandler DownloadProgressChanged;
+        private Dictionary<string , string> _customHeaders = new Dictionary<string , string> ();
+        public Dictionary<string , string> CustomHeaders
+        {
+            get
+            {
+                return _customHeaders;
+            }
+            set
+            {
+                _customHeaders = value;
+            }
+        }
 
         public Network ()
         {
-            webClient . DownloadProgressChanged += ( sender , e ) =>
-              {
-                  DownloadProgressChanged?.Invoke ( sender , e );
-              };
+
         }
 
         WebClient getWebClient ()
@@ -35,11 +40,59 @@ namespace MahoushoujoDesktop
             return c;
         }
 
-        public async Task<byte []> GetBytes ( string url )
+        private void setCustomHeaders ( HttpWebRequest req )
         {
-            return await GetBytes ( url , null );
+            foreach ( var pair in CustomHeaders )
+            {
+                switch ( pair . Key )
+                {
+                case "Accept":
+                    req . Accept = pair . Value;
+                    break;
+                case "Connection":
+                    req . Connection = pair . Value;
+                    break;
+                case "Content-Length":
+                    req . ContentLength = long . Parse ( pair . Value );
+                    break;
+                case "Content-Type":
+                    req . ContentType = pair . Value;
+                    break;
+                case "Expect":
+                    req . Expect = pair . Value;
+                    break;
+                case "Date":
+                    req . Date = DateTime . Parse ( pair . Value );
+                    break;
+                case "Host":
+                    req . Host = pair . Value;
+                    break;
+                case "If-Modified-Since":
+                    req . IfModifiedSince = DateTime . Parse ( pair . Value );
+                    break;
+                case "Range":
+                    throw new NotImplementedException ();
+                case "Referer":
+                    req . Referer = pair . Value;
+                    break;
+                case "Transfer-Encoding":
+                    req . TransferEncoding = pair . Value;
+                    break;
+                case "User-Agent":
+                    req . UserAgent = pair . Value;
+                    break;
+                default:
+                    req . Headers . Add ( pair . Key , pair . Value );
+                    break;
+                }
+            }
         }
-        public async Task<byte []> GetBytes ( string url , DownloadProgressChangedEventHandler progressEvent )
+
+        public async Task<byte []> WebClientGetBytes ( string url )
+        {
+            return await WebClientGetBytes ( url , null );
+        }
+        public async Task<byte []> WebClientGetBytes ( string url , DownloadProgressChangedEventHandler progressEvent )
         {
             WebClient c = getWebClient ();
             if ( progressEvent != null )
@@ -48,15 +101,15 @@ namespace MahoushoujoDesktop
             }
             return await c . DownloadDataTaskAsync ( new Uri ( url ) );
         }
-        public async Task<string> GetString ( string url )
+        public async Task<string> WebClientGetString ( string url )
         {
-            return await GetString ( url , Encoding . UTF8 );
+            return await WebClientGetString ( url , Encoding . UTF8 );
         }
-        public async Task<string> GetString ( string url , Encoding encoding )
+        public async Task<string> WebClientGetString ( string url , Encoding encoding )
         {
             try
             {
-                return encoding . GetString ( await GetBytes ( url ) );
+                return encoding . GetString ( await WebClientGetBytes ( url ) );
             }
             catch ( Exception ex )
             {
@@ -64,22 +117,33 @@ namespace MahoushoujoDesktop
                 return "";
             }
         }
-        
+
+        public async Task<string> Get ( string url )
+        {
+            return await Get ( url , Encoding . UTF8 );
+        }
+        public async Task<string> Get ( string url , Encoding encoding )
+        {
+            var req = WebRequest . CreateHttp ( url );
+            setCustomHeaders ( req );
+
+            var res = await req . GetResponseAsync ();
+            string resContent = await new StreamReader ( res . GetResponseStream () , encoding ) . ReadToEndAsync ();
+            res . Close ();
+
+            return resContent;
+        }
         public async Task<string> Post ( string url , byte [] form )
         {
             return await Post ( url , form , Encoding . UTF8 );
         }
         public async Task<string> Post ( string url , byte [] form , Encoding encoding )
         {
-            var req = WebRequest . Create ( url );
+            var req = WebRequest . CreateHttp ( url );
 
             req . Method = "POST";
             req . ContentType = "application/x-www-form-urlencoded";
-            req . ContentLength = form . Length;
-            foreach ( var pair in CustomHeaders )
-            {
-                req . Headers . Add ( pair . Key , pair . Value );
-            }
+            setCustomHeaders ( req );
 
             var reqStream = await req . GetRequestStreamAsync ();
             await reqStream . WriteAsync ( form , 0 , form . Length );

@@ -8,7 +8,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
     
-        xmlns:Binding="clr-namespace:MahoushoujoDesktop.Binding"
+        xmlns:Binding="clr-namespace:MahoushoujoDesktop.ValueConverter"
     
         x:Name="window" x:Class="MahoushoujoDesktop.MainWindow"
         mc:Ignorable="d"

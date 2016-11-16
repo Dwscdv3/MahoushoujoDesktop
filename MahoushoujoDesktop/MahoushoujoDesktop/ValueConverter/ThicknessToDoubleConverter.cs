@@ -7,7 +7,7 @@ using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Data;
 
-namespace MahoushoujoDesktop . Binding
+namespace MahoushoujoDesktop . ValueConverter
 {
     class ThicknessToDoubleConverter : IValueConverter
     {

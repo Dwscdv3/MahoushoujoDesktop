@@ -69,9 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Binding\HalfConverter.cs" />
-    <Compile Include="Binding\BooleanNotConverter.cs" />
-    <Compile Include="Binding\ThicknessToDoubleConverter.cs" />
+    <Compile Include="ValueConverter\HalfConverter.cs" />
+    <Compile Include="ValueConverter\BooleanNotConverter.cs" />
+    <Compile Include="ValueConverter\ThicknessToDoubleConverter.cs" />
+    <Compile Include="ImageInfo.cs" />
     <Compile Include="UI\CircularProgress.xaml.cs">
       <DependentUpon>CircularProgress.xaml</DependentUpon>
     </Compile>

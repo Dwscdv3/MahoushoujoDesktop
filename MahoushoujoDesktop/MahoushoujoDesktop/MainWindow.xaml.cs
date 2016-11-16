@@ -84,8 +84,21 @@ namespace MahoushoujoDesktop
 
             if ( !string . IsNullOrEmpty ( Default . UserAccessToken ) )
             {
-                var user = await User . GetUserInfoByToken ( Default . UserAccessToken );
-                if ( user . Info . uid > 0 )
+                User user = null;
+                try
+                {
+                    IsLoggingIn = true;
+                    user = await User . GetUserInfoByToken ( Default . UserAccessToken );
+                }
+                catch
+                {
+
+                }
+                finally
+                {
+                    IsLoggingIn = false;
+                }
+                if ( user?.Info != null && user . Info . uid > 0 )
                 {
                     LogInUser = user;
                 }
@@ -231,7 +244,7 @@ namespace MahoushoujoDesktop
         {
             Close ();
         }
-        
+
         public bool IsLoggingIn
         {
             get { return (bool) GetValue ( IsLoggingInProperty ); }
@@ -239,7 +252,7 @@ namespace MahoushoujoDesktop
         }
         public static readonly DependencyProperty IsLoggingInProperty =
             DependencyProperty . Register ( "IsLoggingIn" , typeof ( bool ) , typeof ( MainWindow ) , new PropertyMetadata ( false ) );
-        
+
         private async void buttonLogin_Click ( object sender , RoutedEventArgs e )
         {
             if ( !IsLoggingIn )
@@ -270,7 +283,7 @@ namespace MahoushoujoDesktop
                 }
             }
         }
-        
+
         public void SetUserPanel ()
         {
             if ( !string . IsNullOrEmpty ( LogInUser?.Info?.name ) )

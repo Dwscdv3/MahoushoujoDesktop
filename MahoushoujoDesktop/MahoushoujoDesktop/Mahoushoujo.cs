@@ -4,6 +4,7 @@ using System . Diagnostics;
 using System . IO;
 using System . Linq;
 using System . Net;
+using System . Net . Http;
 using System . Text;
 using System . Threading . Tasks;
 using System . Web . Script . Serialization;
@@ -26,7 +27,7 @@ namespace MahoushoujoDesktop
             { "Referer", "http://syouzyo.org/?from=Dwscdv3.WindowsClient" }
         };
 
-        static bool _isDownloading = false;
+        private static bool _isDownloading = false;
         public static bool IsDownloading
         {
             get
@@ -40,6 +41,21 @@ namespace MahoushoujoDesktop
                 mainWindow . buttonNext . IsEnabled = !value;
             }
         }
+        public static bool CanGoPrevious
+        {
+            get
+            {
+                if ( IsRandom )
+                {
+                    return true;
+                }
+                else
+                {
+                    return pointInHistory > 0;
+                }
+            }
+        }
+
         public static bool IsTimerEnabled
         {
             get
@@ -59,21 +75,8 @@ namespace MahoushoujoDesktop
                 mainWindow . buttonMainSwitch . IsChecked = value;
             }
         }
-        public static bool CanGoPrevious
-        {
-            get
-            {
-                if ( IsRandom )
-                {
-                    return true;
-                }
-                else
-                {
-                    return pointInHistory > 0;
-                }
-            }
-        }
-        static Source _source = Source . Index;
+
+        private static Source _source = Source . Index;
         public static Source Source
         {
             get
@@ -86,7 +89,8 @@ namespace MahoushoujoDesktop
                 Reset ();
             }
         }
-        static bool _isRandom = false;
+
+        private static bool _isRandom = false;
         public static bool IsRandom
         {
             get
@@ -102,6 +106,7 @@ namespace MahoushoujoDesktop
                 }
             }
         }
+
         public static TimeSpan TimerInterval
         {
             get
@@ -116,8 +121,33 @@ namespace MahoushoujoDesktop
             }
         }
 
-        public static Network NetMahoushoujo;
-        static User _logInUser;
+        private static Network _customWebRequest;
+        public static Network CustomWebRequest
+        {
+            get
+            {
+                return _customWebRequest;
+            }
+            private set
+            {
+                _customWebRequest = value;
+            }
+        }
+
+        private static HttpClient _customHttpClient;
+        public static HttpClient CustomHttpClient
+        {
+            get
+            {
+                return _customHttpClient;
+            }
+            private set
+            {
+                _customHttpClient = value;
+            }
+        }
+
+        private static User _logInUser;
         public static User LogInUser
         {
             get
@@ -139,13 +169,14 @@ namespace MahoushoujoDesktop
             }
         }
 
-        static DispatcherTimer timer = new DispatcherTimer ();
-        static DateTime timerStartTime;
-        static DispatcherTimer timerProgressBarNext = new DispatcherTimer ();
-        static MainWindow mainWindow;
-        static int time = 0;
-        static List<JsonImageInfo> history = new List<JsonImageInfo> ();
-        static int pointInHistory = -1;
+
+        private static DispatcherTimer timer = new DispatcherTimer ();
+        private static DateTime timerStartTime;
+        private static DispatcherTimer timerProgressBarNext = new DispatcherTimer ();
+        private static MainWindow mainWindow;
+        private static int time = 0;
+        private static List<JsonImageInfo> history = new List<JsonImageInfo> ();
+        private static int pointInHistory = -1;
 
         static Mahoushoujo ()
         {
@@ -155,10 +186,12 @@ namespace MahoushoujoDesktop
         public static void Init ()
         {
             mainWindow = (MainWindow) App . Current . MainWindow;
-            NetMahoushoujo = new Network ()
+            CustomWebRequest = new Network ()
             {
                 CustomHeaders = MahoushoujoCustomHeaders
             };
+            CustomHttpClient = new HttpClient ();
+            setHttpClientCustomHeaders ();
 
             if ( Default . LastImage != null )
             {
@@ -178,6 +211,21 @@ namespace MahoushoujoDesktop
                 timerProgressBarNext . Start ();
             }
         }
+        private static void setHttpClientCustomHeaders ()
+        {
+            foreach ( var pair in MahoushoujoCustomHeaders )
+            {
+                switch ( pair . Key )
+                {
+                case "Referer":
+                    CustomHttpClient . DefaultRequestHeaders . Referrer = new Uri ( pair . Value );
+                    break;
+                default:
+                    CustomHttpClient . DefaultRequestHeaders . Add ( pair . Key , pair . Value );
+                    break;
+                }
+            }
+        }
 
         public static void Reset ()
         {
@@ -188,7 +236,7 @@ namespace MahoushoujoDesktop
             timer_Tick ( null , null );
         }
 
-        static void timer_Tick ( object sender , EventArgs e )
+        private static void timer_Tick ( object sender , EventArgs e )
         {
             timerStartTime = DateTime . Now;
 
@@ -329,11 +377,11 @@ namespace MahoushoujoDesktop
                 string json;
                 if ( time <= 0 || time >= 2000000000 )
                 {
-                    json = await NetMahoushoujo . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
+                    json = await CustomWebRequest . WebClientGetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
                 }
                 else
                 {
-                    json = await NetMahoushoujo . GetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
+                    json = await CustomWebRequest . WebClientGetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
                 }
 
                 if ( !string . IsNullOrWhiteSpace ( json ) )
@@ -371,7 +419,7 @@ namespace MahoushoujoDesktop
         }
         public static async void Random ()
         {
-            string json = await NetMahoushoujo . GetString ( UrlApi + "rand&预设=宽屏" );
+            string json = await CustomWebRequest . WebClientGetString ( UrlApi + "rand&预设=宽屏" );
             var info = Json . ToObject<JsonImageInfo []> ( json ) [ 0 ];
             time = info . created;
             history . Add ( info );
@@ -390,7 +438,7 @@ namespace MahoushoujoDesktop
         {
             byte [] data = null;
 
-            data = await DownloadData ( getWeiboImageUrl ( hash ) );
+            data = await DownloadData ( GetWeiboImageUrl ( hash ) );
             if ( data == null )
             {
                 return DownloadResult . Failed;
@@ -442,7 +490,7 @@ namespace MahoushoujoDesktop
             IsDownloading = true;
             try
             {
-                data = await NetMahoushoujo . GetBytes ( url , updateProgressBar );
+                data = await CustomWebRequest . WebClientGetBytes ( url , updateProgressBar );
             }
             catch ( WebException ex )
             {
@@ -456,12 +504,12 @@ namespace MahoushoujoDesktop
             }
             return data;
         }
-        static string getWeiboImageUrl ( string hash )
+        public static string GetWeiboImageUrl ( string hash )
         {
             return $"http://ww1.sinaimg.cn/large/{hash}";
         }
 
-        static void updateProgressBar ( object sender , DownloadProgressChangedEventArgs e )
+        private static void updateProgressBar ( object sender , DownloadProgressChangedEventArgs e )
         {
             if ( e . BytesReceived >= e . TotalBytesToReceive )
             {
