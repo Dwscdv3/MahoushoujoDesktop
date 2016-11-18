@@ -438,7 +438,7 @@ namespace MahoushoujoDesktop
         {
             byte [] data = null;
 
-            data = await DownloadData ( GetWeiboImageUrl ( hash ) );
+            data = await DownloadDataWithProgress ( GetWeiboImageUrl ( hash ) );
             if ( data == null )
             {
                 return DownloadResult . Failed;
@@ -455,7 +455,7 @@ namespace MahoushoujoDesktop
         {
             byte [] data = null;
 
-            data = await DownloadData ( url );
+            data = await DownloadDataWithProgress ( url );
             if ( data == null )
             {
                 return DownloadResult . Failed;
@@ -484,7 +484,7 @@ namespace MahoushoujoDesktop
             file . Attributes = file . Attributes | FileAttributes . Hidden;
         }
 
-        private static async Task<byte []> DownloadData ( string url )
+        private static async Task<byte []> DownloadDataWithProgress ( string url )
         {
             byte [] data;
             IsDownloading = true;

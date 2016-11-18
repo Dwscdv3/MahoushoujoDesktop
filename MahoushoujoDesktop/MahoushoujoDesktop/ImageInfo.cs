@@ -36,6 +36,39 @@ namespace MahoushoujoDesktop
             this . Info = info;
         }
 
+        public async Task<byte []> GetBytes ()
+        {
+            byte [] data = null;
+            for ( int i = 0 ; i < 3 ; i++ )
+            {
+                try
+                {
+                    data = await CustomHttpClient . GetByteArrayAsync ( GetWeiboImageUrl ( Info . 微博图片 ) );
+                    break;
+                }
+                catch ( Exception )
+                {
+                    continue;
+                }
+            }
+            if ( data == null && !string . IsNullOrEmpty ( Info . 备份 ) )
+            {
+                for ( int i = 0 ; i < 2 ; i++ )
+                {
+                    try
+                    {
+                        data = await CustomHttpClient . GetByteArrayAsync ( Info . 备份 );
+                        break;
+                    }
+                    catch ( Exception )
+                    {
+                        continue;
+                    }
+                }
+            }
+            return data;
+        }
+
         public static async Task<ImageInfo> GetImageInfoById ( int id )
         {
             var json = await CustomWebRequest . Get ( $"http://api.syouzyo.org/v2/img/{id}" );

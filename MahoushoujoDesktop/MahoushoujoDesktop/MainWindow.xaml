@@ -86,6 +86,7 @@
             </Setter>
         </Style>
         <Style x:Key="FlatIconButtonStyle" TargetType="{x:Type ButtonBase}">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="32px"/>
             <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="50"/>
@@ -282,6 +283,78 @@
         </Style>
     </Window.Resources>
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AlbumListVisibility">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.2"/>
+                    <VisualTransition GeneratedDuration="0:0:0.2" To="Visible">
+                        <Storyboard>
+                            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="itemsAlbumList">
+                                <EasingThicknessKeyFrame KeyTime="0" Value="0,50,0,-50">
+                                    <EasingThicknessKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                                    </EasingThicknessKeyFrame.EasingFunction>
+                                </EasingThicknessKeyFrame>
+                                <EasingThicknessKeyFrame KeyTime="0:0:0.2" Value="0">
+                                    <EasingThicknessKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                                    </EasingThicknessKeyFrame.EasingFunction>
+                                </EasingThicknessKeyFrame>
+                            </ThicknessAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="itemsAlbumList">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut"/>
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut"/>
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="itemsAlbumList">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition From="Visible" GeneratedDuration="0:0:0.2">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="itemsAlbumList">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="1">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="itemsAlbumList">
+                                <EasingThicknessKeyFrame KeyTime="0" Value="0">
+                                    <EasingThicknessKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut"/>
+                                    </EasingThicknessKeyFrame.EasingFunction>
+                                </EasingThicknessKeyFrame>
+                                <EasingThicknessKeyFrame KeyTime="0:0:0.2" Value="0,50,0,-50">
+                                    <EasingThicknessKeyFrame.EasingFunction>
+                                        <ExponentialEase EasingMode="EaseOut"/>
+                                    </EasingThicknessKeyFrame.EasingFunction>
+                                </EasingThicknessKeyFrame>
+                            </ThicknessAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="itemsAlbumList">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Hidden}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Visible"/>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.OpacityMask>
             <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
                 <GradientStop Color="#BF000000" Offset="0"/>
@@ -307,9 +380,10 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
                         <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="1" Margin="5">
-                        <TextBlock x:Name="textTabSetting" Text="&#xE115;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                        <TextBlock x:Name="textTabSetting" Text="&#xE713;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
                         <Button x:Name="buttonTabSetting" Style="{DynamicResource FlatButtonStyle}" Click="tabHeader_Click">
                             <Button.OpacityMask>
                                 <RadialGradientBrush>
@@ -320,9 +394,20 @@
                         </Button>
                     </Grid>
                     <Grid Grid.Column="2" Margin="5">
+                        <TextBlock x:Name="textTabDiscover" Text="&#xE721;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                        <Button x:Name="buttonTabDiscover" Style="{DynamicResource FlatButtonStyle}" Click="tabHeader_Click">
+                            <Button.OpacityMask>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="Black" Offset="1"/>
+                                    <GradientStop Offset="1"/>
+                                </RadialGradientBrush>
+                            </Button.OpacityMask>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="3" Margin="5">
                         <Grid>
                             <Ellipse Fill="#3FFFFFFF"/>
-                            <TextBlock x:Name="textDefaultAvatar" Text="&#xE13D;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="13"/>
+                            <TextBlock x:Name="textDefaultAvatar" Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Margin="13"/>
                             <local.UI:WaitRing x:Name="waitRingLogin" Foreground="#FF66CCFF" Margin="2" Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}" FrameRate="20"/>
                         </Grid>
                         <Ellipse x:Name="ellipseUserAvatar">
@@ -339,12 +424,12 @@
                             </Button.OpacityMask>
                         </Button>
                     </Grid>
-                    <Ellipse Grid.Column="1" x:Name="ellipseSelectedTab" Margin="2" Stroke="#FF66CCFF" StrokeThickness="3"/>
+                    <Ellipse x:Name="ellipseSelectedTab" Margin="2" Stroke="#FF66CCFF" StrokeThickness="3"/>
                 </Grid>
                 <Grid x:Name="gridTab" Margin="0,0,10,0">
                     <Grid.Resources>
                     </Grid.Resources>
-                    <StackPanel Opacity="1" Style="{StaticResource CollapseOpacity0Style}">
+                    <StackPanel Opacity="0" Style="{StaticResource CollapseOpacity0Style}">
                         <TextBlock x:Name="textHeader" TextWrapping="Wrap" Text="Master Spark!" FontSize="31" UseLayoutRounding="True" FontFamily="Lucida Calligraphy"/>
                         <TextBlock Text="↑ 标签页栏预定&#xA;我，发现，选项" HorizontalAlignment="Right"/>
                         <TextBlock Text="——白草园与三位书屋" HorizontalAlignment="Right"/>
@@ -364,6 +449,11 @@
                         <local.UI:HoldButton x:Name="holdButton" Content="HoldButton"
                                              Height="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                              SecondaryOperation="holdButton_SecondaryOperation" MouseSecondaryOperation="RightButtonHold" Click="holdButton_Click" BorderThickness="40,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Opacity="0" Style="{StaticResource CollapseOpacity0Style}">
+                        <TextBlock>
+                            <Bold>DISCOVER</Bold>
+                        </TextBlock>
                     </StackPanel>
                     <StackPanel Opacity="0" Style="{StaticResource CollapseOpacity0Style}">
                         <StackPanel x:Name="stackPanelMe" Orientation="Vertical" Visibility="Collapsed">
@@ -414,11 +504,25 @@
                 </Grid>
             </StackPanel>
             <StackPanel Grid.Row="1">
-                <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,0,0,10"/>
-                <StackPanel x:Name="stackPanelInfo" Margin="0,0,0,10">
+                <StackPanel x:Name="stackPanelInfo" Margin="0,0,10,10">
                     <TextElement.FontSize>
                         <System:Double>12</System:Double>
                     </TextElement.FontSize>
+                    <ItemsControl x:Name="itemsAlbumList" Margin="0" Opacity="0" Visibility="Hidden">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Grid>
+                        <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,10" HorizontalAlignment="Left"/>
+                        <Button x:Name="buttonFavorite" Style="{StaticResource FlatIconButtonStyle}"
+                                Content="&#xE734;"
+                                HorizontalAlignment="Right"
+                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" Height="Auto"/>
+                        <TextBlock x:Name="textFavoriteAmount" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    </Grid>
                     <DockPanel Margin="10,0,10,10">
                         <TextBlock Width="60" VerticalAlignment="Top" Text="ID"/>
                         <TextBlock x:Name="textId" TextWrapping="Wrap"/>
@@ -436,19 +540,19 @@
                         <TextBlock x:Name="textSource" TextWrapping="Wrap"/>
                     </DockPanel>
                     <DockPanel Margin="10,0,10,10">
-                        <TextBlock Text="开发状态" Width="60" VerticalAlignment="Top"/>
+                        <TextBlock Width="60" VerticalAlignment="Top" Text="开发状态"/>
                         <TextBlock Text="Alpha: User system&#xA;@Dwscdv3" TextWrapping="Wrap"/>
                     </DockPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                     <local.UI:HoldButton x:Name="buttonPrev"
-                                         FontFamily="Segoe MDL2 Assets"
                                          ToolTip="想立刻回到最新的一张吗？试试鼠标右键或触摸按住！"
                                          Click="buttonPrev_Click" SecondaryOperation="buttonPrev_SecondaryOperation" MouseSecondaryOperation="RightButtonHold"
                                          BorderThickness="2" BorderBrush="#FF66CCFF">
                         <local.UI:HoldButton.Style>
                             <Style TargetType="{x:Type local.UI:HoldButton}">
                                 <Setter Property="Content" Value="&#xE76B;"/>
+                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
                                 <Setter Property="FontSize" Value="32px"/>
                                 <Setter Property="Width" Value="50"/>
                                 <Setter Property="Height" Value="50"/>
@@ -464,11 +568,11 @@
                     </local.UI:HoldButton>
                     <ToggleButton x:Name="buttonMainSwitch"
                                   Style="{DynamicResource FlatIconButtonStyle}" Template="{DynamicResource FlatToggleButtonTemplate}"
-                                  Content="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="48px"
+                                  Content="&#xE7E8;" FontSize="48px"
                                   Width="64" Height="64" Click="buttonMainSwitch_Click" Margin="10,0"/>
                     <Button x:Name="buttonNext"
                             Style="{DynamicResource FlatIconButtonStyle}"
-                            Content="&#xE76C;" FontFamily="Segoe MDL2 Assets"
+                            Content="&#xE76C;"
                             Click="buttonNext_Click"/>
                 </StackPanel>
             </StackPanel>

@@ -99,44 +99,48 @@ namespace Dwscdv3 . WPF . UserControls
             {
                 MainGrid . Children . Clear ();
 
-                var sideLength = ActualWidth > ActualHeight ? ActualHeight : ActualWidth;
-
-                Path p = new Path ();
-                p . StrokeThickness = StrokeThickness;
-                p . Stroke = Foreground;
-                p . Width = p . Height = sideLength;
-
-                PathGeometry g = new PathGeometry ();
-                PathFigureCollection fc = new PathFigureCollection ();
-                PathFigure f = new PathFigure ();
-                f . StartPoint = new Point ( sideLength / 2 , StrokeThickness / 2 );
-                PathSegmentCollection sc = new PathSegmentCollection ();
-
-                double angle = ( Value - Minimum ) / ( Maximum - Minimum ) * 360;
-                ArcSegment s = new ArcSegment ();
-                s . Size = new Size ( sideLength / 2 - StrokeThickness / 2 , sideLength / 2 - StrokeThickness / 2 );
-                s . SweepDirection = SweepDirection . Clockwise;
-                if ( angle >= 360 )
+                if ( ActualWidth > 0 && ActualHeight > 0 )
                 {
-                    s . IsLargeArc = true;
-                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 359.99 );
-                }
-                else if ( angle > 0 )
-                {
-                    s . IsLargeArc = angle >= 180 ? true : false;
-                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , angle );
-                }
-                else
-                {
-                    s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 0 );
-                }
-                sc . Add ( s );
-                f . Segments = sc;
-                fc . Add ( f );
-                g . Figures = fc;
-                p . Data = g;
 
-                MainGrid . Children . Add ( p );
+                    var sideLength = ActualWidth > ActualHeight ? ActualHeight : ActualWidth;
+
+                    Path p = new Path ();
+                    p . StrokeThickness = StrokeThickness;
+                    p . Stroke = Foreground;
+                    p . Width = p . Height = sideLength;
+
+                    PathGeometry g = new PathGeometry ();
+                    PathFigureCollection fc = new PathFigureCollection ();
+                    PathFigure f = new PathFigure ();
+                    f . StartPoint = new Point ( sideLength / 2 , StrokeThickness / 2 );
+                    PathSegmentCollection sc = new PathSegmentCollection ();
+
+                    double angle = ( Value - Minimum ) / ( Maximum - Minimum ) * 360;
+                    ArcSegment s = new ArcSegment ();
+                    s . Size = new Size ( sideLength / 2 - StrokeThickness / 2 , sideLength / 2 - StrokeThickness / 2 );
+                    s . SweepDirection = SweepDirection . Clockwise;
+                    if ( angle >= 360 )
+                    {
+                        s . IsLargeArc = true;
+                        s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 359.99 );
+                    }
+                    else if ( angle > 0 )
+                    {
+                        s . IsLargeArc = angle >= 180 ? true : false;
+                        s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , angle );
+                    }
+                    else
+                    {
+                        s . Point = GetPointOnCircle ( new Point ( sideLength / 2 , sideLength / 2 ) , s . Size . Width , 0 );
+                    }
+                    sc . Add ( s );
+                    f . Segments = sc;
+                    fc . Add ( f );
+                    g . Figures = fc;
+                    p . Data = g;
+
+                    MainGrid . Children . Add ( p );
+                }
             }
         }
 

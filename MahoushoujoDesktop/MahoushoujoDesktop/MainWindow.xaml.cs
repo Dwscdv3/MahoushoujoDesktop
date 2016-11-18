@@ -80,7 +80,7 @@ namespace MahoushoujoDesktop
             textInterval . Text = NextIntervals [ (int) sliderInterval . Value ] . Description;
             SetTimerIntervalBySliderValue ();
 
-            CurrentTab = 0;
+            CurrentTab = 2;
 
             if ( !string . IsNullOrEmpty ( Default . UserAccessToken ) )
             {
