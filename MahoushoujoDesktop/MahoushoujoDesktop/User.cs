@@ -1,5 +1,6 @@
 ﻿using System;
 using System . Collections . Generic;
+using System . Collections . ObjectModel;
 using System . Diagnostics;
 using System . IO;
 using System . Linq;
@@ -9,7 +10,9 @@ using System . Text . RegularExpressions;
 using System . Threading . Tasks;
 using System . Web . Script . Serialization;
 using System . Windows . Media . Imaging;
+using MahoushoujoDesktop . DataModel;
 using MahoushoujoDesktop . Util;
+using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Properties . Settings;
 
 namespace MahoushoujoDesktop
@@ -28,10 +31,39 @@ namespace MahoushoujoDesktop
                 _info = value;
             }
         }
+        ObservableCollection<AlbumInfo> _albums = null;
+        public ObservableCollection<AlbumInfo> Albums
+        {
+            get
+            {
+                return _albums;
+            }
+            private set
+            {
+                _albums = value;
+            }
+        }
 
         public User ( JsonUserInfo info )
         {
             this . Info = info;
+            initAlbums ();
+        }
+
+        async void initAlbums ()
+        {
+            Albums = new ObservableCollection<AlbumInfo> ();
+            var json = await Mahoushoujo . CustomHttpClient . GetStringAsync (
+                UrlApiV2 + "album?uid=" + Info . uid . ToString () );
+            var jsonObjects = Json . ToObject<List<JsonAlbumInfo>> ( json );
+            foreach ( var jsonObject in jsonObjects )
+            {
+                AlbumInfo album = new AlbumInfo ();
+                album . Name = jsonObject . 标题;
+                album . Count = jsonObject . 图片数;
+                album . Id = jsonObject . id;
+                Albums . Add ( album );
+            }
         }
 
         public static async Task<User> LogIn ( string id , string password )
@@ -85,20 +117,15 @@ namespace MahoushoujoDesktop
         public static async Task<User> GetUserInfoByToken ( string token )
         {
             var form = Encoding . UTF8 . GetBytes ( $"sss={ token }" );
-            var json = await Mahoushoujo . CustomWebRequest . Post ( "http://api.syouzyo.org/?u" , form );
+            var json = await Mahoushoujo . CustomWebRequest . Post ( UrlApiV1 + "u" , form );
             var info = Json . ToObject<JsonUserInfo> ( json );
 
             return new User ( info );
         }
         public static async Task<User> GetUserInfoById ( int id )
         {
-            var req = WebRequest . CreateHttp ( $"http://api.syouzyo.org/?user/{id}" );
-            req . Referer = "http://syouzyo.org/?from=Dwscdv3.WindowsClient";
-
-            var res = await req . GetResponseAsync ();
-            string json = await new StreamReader ( res . GetResponseStream () , Encoding . UTF8 ) . ReadToEndAsync ();
+            var json = await Mahoushoujo . CustomWebRequest . Get ( $"{UrlApiV1}user/{id}" );
             var info = Json . ToObject<JsonUserInfo> ( json );
-            res . Close ();
 
             return new User ( info );
         }

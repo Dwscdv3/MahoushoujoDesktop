@@ -3,7 +3,8 @@ using System . Collections . Generic;
 using System . Collections . ObjectModel;
 using System . ComponentModel;
 
-namespace MahoushoujoDesktop
+// TODO: 旧版数据格式，不支持数据绑定
+namespace MahoushoujoDesktop . DataModel
 {
     public class JsonImageInfo
     {
@@ -79,7 +80,7 @@ namespace MahoushoujoDesktop
         public int uid { get; set; }
         public string 标题 { get; set; }
         public string 简介 { get; set; }
-        public List<JsonImageInfo> 图片们 { get; set; }
+        //public List<JsonImageInfo> 图片们 { get; set; }
         public string 封面图 { get; set; }
         public string 颜色 { get; set; }
         public int 状态 { get; set; }

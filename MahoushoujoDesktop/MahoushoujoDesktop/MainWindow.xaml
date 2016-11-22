@@ -7,6 +7,7 @@
         xmlns:local.UI="clr-namespace:MahoushoujoDesktop.UI"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:UserControls="clr-namespace:Dwscdv3.WPF.UserControls"
+        xmlns:DataModel="clr-namespace:MahoushoujoDesktop.DataModel"
     
         xmlns:Binding="clr-namespace:MahoushoujoDesktop.ValueConverter"
     
@@ -67,15 +68,18 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ButtonBase}">
-                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
+                        <Grid>
+                            <Rectangle x:Name="Bg" Fill="#7FFFFFFF" Opacity="0"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="Bd" Value="#3FFFFFFF"/>
+                                <Setter Property="Opacity" TargetName="Bg" Value="0.5"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                                <Setter Property="Opacity" TargetName="Bg" Value="1"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.25"/>
@@ -97,15 +101,18 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ButtonBase}">
-                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
+                        <Grid>
+                            <Rectangle x:Name="Bg" Fill="#7FFFFFFF" Opacity="0"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="Bd" Value="#3FFFFFFF"/>
+                                <Setter Property="Opacity" TargetName="Bg" Value="0.5"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" TargetName="Bd" Value="#7FFFFFFF"/>
+                                <Setter Property="Opacity" TargetName="Bg" Value="1"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.25"/>
@@ -282,12 +289,12 @@
             <Setter Property="Template" Value="{StaticResource SliderHorizontal}"/>
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="gridRoot">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AlbumListVisibility">
+            <VisualStateGroup x:Name="AddFavoriteListVisibility">
                 <VisualStateGroup.Transitions>
                     <VisualTransition GeneratedDuration="0:0:0.2"/>
-                    <VisualTransition GeneratedDuration="0:0:0.2" To="Visible">
+                    <VisualTransition GeneratedDuration="0:0:0.2" To="AddFavoriteListVisible">
                         <Storyboard>
                             <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="itemsAlbumList">
                                 <EasingThicknessKeyFrame KeyTime="0" Value="0,50,0,-50">
@@ -319,7 +326,7 @@
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualTransition>
-                    <VisualTransition From="Visible" GeneratedDuration="0:0:0.2">
+                    <VisualTransition From="AddFavoriteListVisible" GeneratedDuration="0:0:0.2">
                         <Storyboard>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="itemsAlbumList">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="1">
@@ -352,7 +359,17 @@
                         </Storyboard>
                     </VisualTransition>
                 </VisualStateGroup.Transitions>
-                <VisualState x:Name="Visible"/>
+                <VisualState x:Name="AddFavoriteListVisible">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="itemsAlbumList">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="itemsAlbumList">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="AddFavoriteListHidden"/>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.OpacityMask>
@@ -508,19 +525,80 @@
                     <TextElement.FontSize>
                         <System:Double>12</System:Double>
                     </TextElement.FontSize>
-                    <ItemsControl x:Name="itemsAlbumList" Margin="0" Opacity="0" Visibility="Hidden">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <Grid x:Name="gridItemsAlbumList" PreviewMouseLeftButtonDown="gridItemsAlbumList_PreviewMouseLeftButtonDown">
+                        <ItemsControl x:Name="itemsAlbumList" Margin="0" Opacity="0" Visibility="Hidden"
+                                      Loaded="itemsAlbumList_Loaded" Background="#7F000000" Panel.ZIndex="1">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="favItemsBorder" CornerRadius="10" BorderThickness="1" Margin="5" Padding="0" Loaded="favItemsBorder_Loaded" SnapsToDevicePixels="True">
+                                        <Border.Resources>
+                                            <Color x:Key="BorderColor">#FF66CCFF</Color>
+                                            <Color x:Key="BorderColorTransparent">#0066CCFF</Color>
+                                        </Border.Resources>
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="{StaticResource BorderColor}"/>
+                                        </Border.BorderBrush>
+                                        <Border.Background>
+                                            <SolidColorBrush Color="{StaticResource BorderColorTransparent}"/>
+                                        </Border.Background>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CheckingState">
+                                                <VisualStateGroup.Transitions>
+                                                    <VisualTransition GeneratedDuration="0:0:0.2"/>
+                                                </VisualStateGroup.Transitions>
+                                                <VisualState x:Name="Checked">
+                                                    <Storyboard>
+                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="textBlock">
+                                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                                        </DoubleAnimationUsingKeyFrames>
+                                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="favItemsBorder">
+                                                            <EasingColorKeyFrame KeyTime="0" Value="{StaticResource BorderColor}"/>
+                                                        </ColorAnimationUsingKeyFrames>
+                                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="favItemsBorder">
+                                                            <EasingColorKeyFrame KeyTime="0" Value="Black"/>
+                                                        </ColorAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Unchecked"/>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <TextElement.Foreground>
+                                            <SolidColorBrush Color="White"/>
+                                        </TextElement.Foreground>
+                                        <Grid>
+                                            <Grid Margin="5">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Path=Name}" FontSize="18"/>
+                                                    <WrapPanel Margin="5,0">
+                                                        <TextBlock Text="数量: "/>
+                                                        <TextBlock Text="{Binding Path=Count}"/>
+                                                    </WrapPanel>
+                                                </StackPanel>
+                                                <TextBlock x:Name="textBlock" VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="&#xE8FB;" FontFamily="Segoe MDL2 Assets" FontSize="16" Opacity="0"/>
+                                            </Grid>
+                                            <Button x:Name="buttonFavAlbum" Style="{StaticResource FlatButtonStyle}"
+                                                    LostMouseCapture="buttonFavAlbum_LostMouseCapture" Click="buttonFavAlbum_Click"
+                                                    Cursor="Hand"
+                                                    Tag="{Binding Path=Self}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                                                        <Border Background="Transparent"/>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
                     <Grid>
                         <TextBlock Text="此作品的详细信息" FontSize="18" Margin="0,10" HorizontalAlignment="Left"/>
                         <Button x:Name="buttonFavorite" Style="{StaticResource FlatIconButtonStyle}"
                                 Content="&#xE734;"
                                 HorizontalAlignment="Right"
-                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" Height="Auto"/>
+                                Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" Height="Auto"
+                                Click="buttonFavorite_Click"/>
                         <TextBlock x:Name="textFavoriteAmount" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                     </Grid>
                     <DockPanel Margin="10,0,10,10">

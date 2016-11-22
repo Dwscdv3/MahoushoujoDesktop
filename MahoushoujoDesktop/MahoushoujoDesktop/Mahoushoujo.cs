@@ -13,6 +13,7 @@ using System . Windows . Documents;
 using System . Windows . Media;
 using System . Windows . Navigation;
 using System . Windows . Threading;
+using MahoushoujoDesktop . DataModel;
 using MahoushoujoDesktop . Util;
 using static MahoushoujoDesktop . Const;
 using static MahoushoujoDesktop . Native . Managed;
@@ -134,6 +135,7 @@ namespace MahoushoujoDesktop
             }
         }
 
+        private static HttpClientHandler _customHttpClientHandler;
         private static HttpClient _customHttpClient;
         public static HttpClient CustomHttpClient
         {
@@ -158,6 +160,10 @@ namespace MahoushoujoDesktop
             {
                 _logInUser = value;
                 Default . UserAccessToken = value?.Info?.sss;
+                _customHttpClientHandler . CookieContainer . Add (
+                    new Uri ( UrlApiBase ) ,
+                    new Cookie ( "sss" , value?.Info?.sss )
+                );
                 mainWindow . SetUserPanel ();
             }
         }
@@ -190,7 +196,8 @@ namespace MahoushoujoDesktop
             {
                 CustomHeaders = MahoushoujoCustomHeaders
             };
-            CustomHttpClient = new HttpClient ();
+            _customHttpClientHandler = new HttpClientHandler ();
+            CustomHttpClient = new HttpClient ( _customHttpClientHandler );
             setHttpClientCustomHeaders ();
 
             if ( Default . LastImage != null )
@@ -377,11 +384,11 @@ namespace MahoushoujoDesktop
                 string json;
                 if ( time <= 0 || time >= 2000000000 )
                 {
-                    json = await CustomWebRequest . WebClientGetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
+                    json = await CustomWebRequest . WebClientGetString ( UrlApiV1 + "img&count=1&h=-1&l=-1&比例=pc&unix=2000000000" );
                 }
                 else
                 {
-                    json = await CustomWebRequest . WebClientGetString ( UrlApi + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
+                    json = await CustomWebRequest . WebClientGetString ( UrlApiV1 + "img&count=1&h=-1&l=-1&比例=pc&unix=" + time . ToString () );
                 }
 
                 if ( !string . IsNullOrWhiteSpace ( json ) )
@@ -419,7 +426,7 @@ namespace MahoushoujoDesktop
         }
         public static async void Random ()
         {
-            string json = await CustomWebRequest . WebClientGetString ( UrlApi + "rand&预设=宽屏" );
+            string json = await CustomWebRequest . WebClientGetString ( UrlApiV1 + "rand&预设=宽屏" );
             var info = Json . ToObject<JsonImageInfo []> ( json ) [ 0 ];
             time = info . created;
             history . Add ( info );
@@ -519,6 +526,19 @@ namespace MahoushoujoDesktop
             {
                 mainWindow . progressBar . Value = (double) e . BytesReceived / e . TotalBytesToReceive;
             }
+        }
+
+        /// <summary>
+        /// 获取当前登录用户的简化版收藏列表。如果尚未登录，返回 null。
+        /// </summary>
+        public static async Task<Dictionary<int , int>> GetAllLike ()
+        {
+            if ( LogInUser != null )
+            {
+                var json = await CustomHttpClient . GetStringAsync ( UrlApiV1 + "allike" );
+                return Json . ToDictionary<int> ( json ) . ConvertKeysToInt32 ();
+            }
+            return null;
         }
     }
     public enum Source

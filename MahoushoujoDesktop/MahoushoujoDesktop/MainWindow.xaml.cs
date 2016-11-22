@@ -14,6 +14,7 @@ using System . Windows . Media;
 using System . Windows . Media . Animation;
 using System . Windows . Media . Imaging;
 using Gma . System . MouseKeyHook;
+using MahoushoujoDesktop . DataModel;
 using MahoushoujoDesktop . Native;
 using MahoushoujoDesktop . Util;
 using static MahoushoujoDesktop . Const;
@@ -292,6 +293,7 @@ namespace MahoushoujoDesktop
                 textBlockUserName . Text = LogInUser . Info . name;
                 stackPanelLogin . Visibility = Visibility . Collapsed;
                 stackPanelMe . Visibility = Visibility . Visible;
+                GetAllLike ();
             }
         }
 
@@ -542,6 +544,49 @@ namespace MahoushoujoDesktop
         private void buttonPrev_SecondaryOperation ( object sender , RoutedEventArgs e )
         {
             Reset ();
+        }
+
+        private void buttonFavorite_Click ( object sender , RoutedEventArgs e )
+        {
+            if ( IsLoggedIn )
+            {
+                VisualStateManager . GoToElementState ( gridRoot , "AddFavoriteListVisible" , true );
+                Mouse . Capture ( gridItemsAlbumList , CaptureMode . SubTree );
+            }
+            else
+            {
+                textBoxUsername . Focus ();
+                CurrentTab = 2;
+            }
+        }
+
+        private void gridItemsAlbumList_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            if ( !itemsAlbumList . IsMouseOver )
+            {
+                VisualStateManager . GoToElementState ( gridRoot , "AddFavoriteListHidden" , true );
+                gridItemsAlbumList . ReleaseMouseCapture ();
+            }
+        }
+
+        private void buttonFavAlbum_LostMouseCapture ( object sender , MouseEventArgs e )
+        {
+            Mouse . Capture ( gridItemsAlbumList , CaptureMode . SubTree );
+        }
+
+        private void buttonFavAlbum_Click ( object sender , RoutedEventArgs e )
+        {
+            var album = ( sender as FrameworkElement ) . Tag as AlbumInfo;
+        }
+
+        private void favItemsBorder_Loaded ( object sender , RoutedEventArgs e )
+        {
+            VisualStateManager . GoToElementState ( sender as FrameworkElement , "Unchecked" , false );
+        }
+
+        private void itemsAlbumList_Loaded ( object sender , RoutedEventArgs e )
+        {
+            VisualStateManager . GoToElementState ( gridRoot , "AddFavoriteListHidden" , false );
         }
     }
 }

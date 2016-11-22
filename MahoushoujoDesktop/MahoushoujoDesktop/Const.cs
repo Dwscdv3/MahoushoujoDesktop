@@ -7,11 +7,25 @@ namespace MahoushoujoDesktop
 {
     public static class Const
     {
-        public static string UrlApi
+        public static string UrlApiBase
         {
             get
             {
-                return "http://api.syouzyo.org/?";
+                return "http://api.syouzyo.org/";
+            }
+        }
+        public static string UrlApiV1
+        {
+            get
+            {
+                return UrlApiBase + "?";
+            }
+        }
+        public static string UrlApiV2
+        {
+            get
+            {
+                return UrlApiBase + "v2/";
             }
         }
 

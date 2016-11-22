@@ -61,9 +61,9 @@ namespace MahoushoujoDesktop.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::MahoushoujoDesktop.JsonImageInfo LastImage {
+        public global::MahoushoujoDesktop.DataModel.JsonImageInfo LastImage {
             get {
-                return ((global::MahoushoujoDesktop.JsonImageInfo)(this["LastImage"]));
+                return ((global::MahoushoujoDesktop.DataModel.JsonImageInfo)(this["LastImage"]));
             }
             set {
                 this["LastImage"] = value;

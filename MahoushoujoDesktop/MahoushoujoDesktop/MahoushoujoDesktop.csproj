@@ -71,6 +71,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataModel\AlbumInfo.cs" />
     <Compile Include="ValueConverter\HalfConverter.cs" />
     <Compile Include="ValueConverter\BooleanNotConverter.cs" />
     <Compile Include="ValueConverter\ThicknessToDoubleConverter.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="UI\CircularProgress.xaml.cs">
       <DependentUpon>CircularProgress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JsonInfo.cs" />
+    <Compile Include="DataModel\JsonInfo.cs" />
     <Compile Include="Mahoushoujo.cs" />
     <Compile Include="Native\Managed.cs" />
     <Compile Include="Native\User32.cs" />
@@ -167,6 +168,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="segmdl2.ttf">

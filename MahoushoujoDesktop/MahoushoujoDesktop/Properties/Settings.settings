@@ -11,7 +11,7 @@
     <Setting Name="MainSwitch" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="LastImage" Type="MahoushoujoDesktop.JsonImageInfo" Scope="User">
+    <Setting Name="LastImage" Type="MahoushoujoDesktop.DataModel.JsonImageInfo" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="NextIntervalSliderValue" Type="System.Double" Scope="User">
